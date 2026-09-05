@@ -1,0 +1,42 @@
+# Security / Credentials
+*passwd*
+*password*
+*.key
+*.pem
+*.token
+api_key*
+secret*
+
+# Environments and config
+.env
+.env.*
+config/private.*
+config/credentials.*
+
+# Temporary / Cache
+*.tmp
+*.temp
+*.swp
+*.log
+.cache/
+tmp/
+temp/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+ENV/
+env/
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# System Files
+.DS_Store
+Thumbs.db
