@@ -72,6 +72,10 @@ def build():
 
         <!-- Quick Top Actions -->
         <div class="flex items-center space-x-2 sm:space-x-3">
+          <button onclick="openQrModal()" class="inline-flex items-center px-2.5 py-1.5 text-xs font-medium rounded-lg text-slate-700 bg-slate-100 hover:bg-slate-200 transition" title="手機掃描 QR Code">
+            <i data-lucide="qr-code" class="w-4 h-4 mr-1 text-slate-600"></i>
+            手機 QR Code
+          </button>
           <button onclick="downloadExcelTemplate()" class="inline-flex items-center px-3 py-1.5 text-xs font-medium rounded-lg text-slate-700 bg-slate-100 hover:bg-slate-200 transition">
             <i data-lucide="file-spreadsheet" class="w-4 h-4 mr-1 text-emerald-600"></i>
             下載標準範本
@@ -273,6 +277,34 @@ def build():
       <p class="text-slate-400">本系統純前端本機運作，資料安全保密不外傳 • 支援健保代碼、中文名、支付價與給付規定 PDF 直連</p>
     </div>
   </footer>
+
+  <!-- Modal: QR Code -->
+  <div id="qrModal" class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center hidden p-4">
+    <div class="bg-white rounded-2xl max-w-sm w-full shadow-2xl border border-slate-100 overflow-hidden transform transition-all text-center">
+      <div class="px-6 py-4 bg-gradient-to-r from-teal-600 to-emerald-600 text-white flex items-center justify-between">
+        <div class="flex items-center space-x-2">
+          <i data-lucide="qr-code" class="w-5 h-5"></i>
+          <h3 class="text-sm font-bold">手機掃描立即開啟系統</h3>
+        </div>
+        <button onclick="closeQrModal()" class="text-white/80 hover:text-white transition">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <div class="p-6 flex flex-col items-center space-y-4">
+        <div class="p-3 bg-white border-2 border-slate-100 rounded-2xl shadow-inner">
+          <img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=https%3A%2F%2Fjuliahml-ux.github.io%2Fhospital-drug-master%2F&margin=10" alt="QR Code" class="w-48 h-48 rounded-lg shadow-xs">
+        </div>
+        <div>
+          <p class="text-xs font-semibold text-slate-800">醫院藥品主檔與健保代碼管理系統</p>
+          <p class="text-[11px] text-slate-400 font-mono mt-1 break-all">https://juliahml-ux.github.io/hospital-drug-master/</p>
+        </div>
+        <button onclick="copySystemUrl()" class="w-full py-2 px-3 rounded-lg bg-teal-50 text-teal-700 hover:bg-teal-100 font-medium text-xs transition flex items-center justify-center space-x-1.5 border border-teal-200">
+          <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+          <span>複製專屬網址</span>
+        </button>
+      </div>
+    </div>
+  </div>
 
   <!-- Modal: Add / Edit Drug -->
   <div id="drugModal" class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center hidden p-4">
@@ -688,6 +720,22 @@ def build():
         renderTable();
         lucide.createIcons();
       }}
+    }}
+
+    function openQrModal() {{
+      document.getElementById("qrModal").classList.remove("hidden");
+      lucide.createIcons();
+    }}
+
+    function closeQrModal() {{
+      document.getElementById("qrModal").classList.add("hidden");
+    }}
+
+    function copySystemUrl() {{
+      const url = "https://juliahml-ux.github.io/hospital-drug-master/";
+      navigator.clipboard.writeText(url).then(() => {{
+        showToast("已成功複製專屬網址到剪貼簿！", "success");
+      }});
     }}
 
     function openAddDrugModal() {{
