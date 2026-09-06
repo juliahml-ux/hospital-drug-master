@@ -132,8 +132,8 @@
       </div>
     </div>
 
-    <!-- Toolbar: Search, Filters & Actions -->
-    <div class="bg-white rounded-xl border border-slate-200 p-4 shadow-xs space-y-3">
+    <!-- Toolbar: Search, Filters & Actions (Sticky Top Pane) -->
+    <div class="bg-white/95 backdrop-blur-md rounded-xl border border-slate-200 p-4 shadow-sm space-y-3 sticky top-16 z-20">
       <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
         <div class="relative flex-1">
           <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
@@ -194,13 +194,15 @@
     </div>
 
     <!-- Drug Master Data Table -->
-    <div class="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden">
-      <div class="overflow-x-auto custom-scrollbar max-h-[640px]">
-        <table class="w-full text-left border-collapse">
-          <thead class="bg-slate-50 border-b border-slate-200 sticky top-0 z-10 text-xs font-semibold text-slate-600">
+    <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+      <div class="overflow-x-auto custom-scrollbar max-h-[660px]">
+        <table class="w-full text-left border-collapse table-auto">
+          <thead class="bg-slate-50 border-b border-slate-200 sticky top-0 z-20 text-xs font-semibold text-slate-600 select-none shadow-xs">
             <tr>
-              <th class="py-3 px-3 w-10 text-center">序號</th>
-              <th class="py-3 px-3 w-24 cursor-pointer hover:bg-slate-100 transition" onclick="toggleSort('hospitalCode')">
+              <!-- Cross Freeze: Column 1 (Index) Sticky Top + Left -->
+              <th class="py-3 px-2 w-12 text-center sticky top-0 left-0 bg-slate-100 z-30 border-r border-slate-200">序號</th>
+              <!-- Cross Freeze: Column 2 (Hospital Code) Sticky Top + Left -->
+              <th class="py-3 px-3 w-28 cursor-pointer hover:bg-slate-200 transition sticky top-0 left-12 bg-slate-100 z-30 border-r-2 border-slate-300 shadow-[4px_0_6px_-2px_rgba(0,0,0,0.06)]" onclick="toggleSort('hospitalCode')">
                 <div class="flex items-center space-x-1">
                   <span>院內代碼</span>
                   <i data-lucide="arrow-up-down" class="w-3 h-3 text-slate-400"></i>
@@ -212,26 +214,27 @@
                   <i data-lucide="arrow-up-down" class="w-3 h-3 text-slate-400"></i>
                 </div>
               </th>
-              <th class="py-3 px-3 min-w-[170px] cursor-pointer hover:bg-slate-100 transition" onclick="toggleSort('chineseName')">
+              <th class="py-3 px-3 w-40 min-w-[130px] cursor-pointer hover:bg-slate-100 transition" onclick="toggleSort('chineseName')">
                 <div class="flex items-center space-x-1">
-                  <span>健保核定中文名</span>
+                  <span>健保中文品名</span>
                   <i data-lucide="arrow-up-down" class="w-3 h-3 text-slate-400"></i>
                 </div>
               </th>
-              <th class="py-3 px-3 min-w-[200px] cursor-pointer hover:bg-slate-100 transition" onclick="toggleSort('brandName')">
+              <th class="py-3 px-3 w-48 min-w-[160px] cursor-pointer hover:bg-slate-100 transition" onclick="toggleSort('brandName')">
                 <div class="flex items-center space-x-1">
                   <span>英文商品名</span>
                   <i data-lucide="arrow-up-down" class="w-3 h-3 text-slate-400"></i>
                 </div>
               </th>
-              <th class="py-3 px-3 min-w-[160px]">學名 / 主成分</th>
+              <!-- Generic Name Column: Compact width, readable header -->
+              <th class="py-3 px-3 w-48 min-w-[150px] bg-teal-50/50 text-teal-900 border-x border-teal-100/60 font-bold">學名 / 主成分</th>
               <th class="py-3 px-3 w-24 text-right cursor-pointer hover:bg-slate-100 transition" onclick="toggleSort('price')">
                 <div class="flex items-center justify-end space-x-1">
                   <span>健保支付價</span>
                   <i data-lucide="arrow-up-down" class="w-3 h-3 text-slate-400"></i>
                 </div>
               </th>
-              <th class="py-3 px-3 min-w-[130px]">健保給付條件 / 規定</th>
+              <th class="py-3 px-3 w-32 min-w-[120px]">健保給付規定</th>
               <th class="py-3 px-3 w-28">規格 / 包裝</th>
               <th class="py-3 px-3 w-16 text-center">劑型</th>
               <th class="py-3 px-3 w-20 text-center">查詢/操作</th>
@@ -635,29 +638,36 @@
           }
 
           return `
-            <tr class="hover:bg-teal-50/40 transition group border-b border-slate-100">
-              <td class="py-2.5 px-3 text-center font-mono text-slate-400 text-xs">${rowNum}</td>
-              <td class="py-2.5 px-3 font-semibold text-slate-900 font-mono tracking-wide">
-                <span class="bg-slate-100 text-slate-800 px-1.5 py-0.5 rounded border border-slate-200 text-xs">${escapeHtml(drug.hospitalCode || "-")}</span>
+            <tr class="hover:bg-teal-50/50 transition group border-b border-slate-100">
+              <!-- Cross Freeze: Sticky Left Index -->
+              <td class="py-3 px-2 text-center font-mono text-slate-400 text-xs sticky left-0 bg-white group-hover:bg-slate-50 z-10 border-r border-slate-200">${rowNum}</td>
+              <!-- Cross Freeze: Sticky Left Hospital Code -->
+              <td class="py-3 px-3 font-bold text-slate-900 font-mono tracking-wide sticky left-12 bg-white group-hover:bg-slate-50 z-10 border-r-2 border-slate-300 shadow-[4px_0_6px_-2px_rgba(0,0,0,0.06)]">
+                <span class="bg-slate-100 text-slate-900 px-1.5 py-0.5 rounded border border-slate-300 text-xs font-bold">${escapeHtml(drug.hospitalCode || "-")}</span>
               </td>
-              <td class="py-2.5 px-3">${nhiDisplay}</td>
-              <td class="py-2.5 px-3 font-medium text-slate-900">
-                <div class="line-clamp-2" title="${escapeHtml(drug.chineseName || '-')}">${escapeHtml(drug.chineseName || "-")}</div>
+              <td class="py-3 px-3">${nhiDisplay}</td>
+              <td class="py-3 px-3 font-medium text-slate-900 w-40 min-w-[130px]">
+                <div class="break-words whitespace-normal text-xs leading-snug" title="${escapeHtml(drug.chineseName || '-')}">${escapeHtml(drug.chineseName || "-")}</div>
               </td>
-              <td class="py-2.5 px-3 font-medium text-slate-800">
-                <div class="line-clamp-2" title="${escapeHtml(drug.brandName || '-')}">${escapeHtml(drug.brandName || "-")}</div>
-                ${drug.atc ? `<span class="text-[10px] font-mono text-teal-700 bg-teal-50/80 px-1 py-0.2 rounded border border-teal-100 mr-1">${escapeHtml(drug.atc)}</span>` : ''}
+              <td class="py-3 px-3 font-semibold text-slate-800 w-48 min-w-[160px]">
+                <div class="break-words whitespace-normal text-xs leading-snug" title="${escapeHtml(drug.brandName || '-')}">${escapeHtml(drug.brandName || "-")}</div>
+                ${drug.atc ? `<span class="inline-block mt-1 text-[10px] font-mono text-teal-800 bg-teal-50 px-1.5 py-0.5 rounded border border-teal-200 font-semibold">${escapeHtml(drug.atc)}</span>` : ''}
               </td>
-              <td class="py-2.5 px-3 text-slate-600 italic">
-                <div class="line-clamp-2 text-[11px]" title="${escapeHtml(drug.genericName || '-')}">${escapeHtml(drug.genericName || "-")}</div>
+              <!-- Enhanced Generic Name: Larger text, not too wide, word wrap enabled -->
+              <td class="py-3 px-3 bg-teal-50/30 border-x border-teal-100/60 w-48 min-w-[150px]">
+                <div class="text-[13px] font-bold text-slate-900 break-words whitespace-normal leading-snug" title="${escapeHtml(drug.genericName || '-')}">
+                  ${escapeHtml(drug.genericName || "-")}
+                </div>
               </td>
-              <td class="py-2.5 px-3 text-right">${priceDisplay}</td>
-              <td class="py-2.5 px-3">${ruleDisplay}</td>
-              <td class="py-2.5 px-3 text-slate-600 text-[11px]">${escapeHtml(drug.strength || "-")}</td>
-              <td class="py-2.5 px-3 text-center">
-                <span class="bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded text-[11px] font-medium font-mono">${escapeHtml(drug.dosageForm || "-")}</span>
+              <td class="py-3 px-3 text-right font-mono">${priceDisplay}</td>
+              <td class="py-3 px-3">${ruleDisplay}</td>
+              <td class="py-3 px-3 text-slate-700 text-xs">
+                <div class="break-words whitespace-normal leading-snug">${escapeHtml(drug.strength || "-")}</div>
               </td>
-              <td class="py-2.5 px-3 text-center">
+              <td class="py-3 px-3 text-center">
+                <span class="bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded text-[11px] font-semibold font-mono">${escapeHtml(drug.dosageForm || "-")}</span>
+              </td>
+              <td class="py-3 px-3 text-center">
                 <div class="flex items-center justify-center space-x-1">
                   <a href="${queryUrl}" target="_blank" title="健保署/食藥署官網品項查詢" class="p-1.5 text-slate-400 hover:text-sky-600 hover:bg-sky-50 rounded transition">
                     <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
