@@ -64,9 +64,9 @@ def build():
           <div>
             <div class="flex items-center space-x-2">
               <h1 class="text-lg font-bold text-slate-900 tracking-tight">醫院藥品主檔與健保代碼價格管理系統</h1>
-              <span class="px-2 py-0.5 text-xs font-semibold rounded-full bg-teal-100 text-teal-800 border border-teal-200">v2.1 處方系統連線版</span>
+              <span class="px-2 py-0.5 text-xs font-semibold rounded-full bg-teal-100 text-teal-800 border border-teal-200">v2.1 臨床標準版</span>
             </div>
-            <p class="text-xs text-slate-500">院內碼 • 英文商品名 • 學名主成分 • 規格/包裝 • 劑型 • 健保碼 • 健保支付價 • 給付規定 • 嘉義醫院 TamisDrugP 查詢</p>
+            <p class="text-xs text-slate-500">院內碼 • 英文商品名 • 學名/主成分 • 規格/包裝 • 劑型 • 健保代碼 • 健保支付價 • 健保給付規定章節與 PDF 連結</p>
           </div>
         </div>
 
@@ -188,7 +188,7 @@ def build():
           <span class="inline-flex items-center"><span class="w-2 h-2 rounded-full bg-emerald-500 mr-1.5"></span>綠標：健保給付品項</span>
           <span class="inline-flex items-center"><span class="w-2 h-2 rounded-full bg-indigo-500 mr-1.5"></span>藍標：附給付規定章節 PDF</span>
           <span class="inline-flex items-center"><span class="w-2 h-2 rounded-full bg-amber-500 mr-1.5"></span>黃標：自費/未收載</span>
-          <span class="inline-flex items-center text-teal-700 font-medium ml-1"><i data-lucide="hospital" class="w-3.5 h-3.5 mr-1 text-teal-600"></i>支援點擊院內碼直連嘉義醫院處方系統 (TamisDrugP)</span>
+          <span class="text-slate-400 font-normal ml-2 hidden lg:inline">💡 提示：點擊給付規定章節可直接下載官方 PDF 規範</span>
         </div>
         <div class="flex flex-wrap items-center space-x-2">
           <button onclick="loadEnrichedPreset()" class="text-teal-700 font-semibold hover:underline bg-teal-50 hover:bg-teal-100 px-2 py-1 rounded-md border border-teal-200 transition flex items-center space-x-1">
@@ -275,7 +275,7 @@ def build():
               </th>
 
               <!-- Column 10: Links & Actions -->
-              <th class="py-3 px-3 w-36 text-center">查詢/操作</th>
+              <th class="py-3 px-3 w-24 text-center">查詢/操作</th>
             </tr>
           </thead>
           <tbody id="drugTableBody" class="divide-y divide-slate-100 text-xs text-slate-700"></tbody>
@@ -306,8 +306,8 @@ def build():
 
   <footer class="bg-white border-t border-slate-200 py-4 mt-8">
     <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-500 space-y-1">
-      <p>醫院藥品主檔與健保代碼價格管理系統 • 資料來源：衛生福利部中央健康保險署開放資料庫 & 衛福部嘉義醫院處方藥品系統</p>
-      <p class="text-slate-400">本系統純前端本機運作，資料安全保密不外傳 • 支援健保代碼、中文名、支付價、給付規定 PDF 與 TamisDrugP 藥品介紹直連</p>
+      <p>醫院藥品主檔與健保代碼價格管理系統 • 資料來源：衛生福利部中央健康保險署開放資料庫</p>
+      <p class="text-slate-400">本系統純前端本機運作，資料安全保密不外傳 • 支援健保代碼、中文名、支付價與給付規定 PDF 直連</p>
     </div>
   </footer>
 
@@ -441,7 +441,7 @@ def build():
     // Embedded 761 Clinical Drugs with Matched NHI Codes, Prices and Payment Rules
     const HOSPITAL_ENRICHED_PRESET = {json_data};
 
-    const STORAGE_KEY = "hospital_drug_master_db_v5";
+    const STORAGE_KEY = "hospital_drug_master_db_v6";
     let drugs = [];
     let currentPage = 1;
     let pageSize = 15;
@@ -671,9 +671,6 @@ def build():
             }}
           }}
 
-          // TamisDrugP URL: 自動搜尋該藥品之院內代碼介紹頁面
-          const tamisUrl = `https://rfid-server.chyi.mohw.gov.tw/TamisDrugP/DD1_IDrugChkPop.aspx?lblId=${{encodeURIComponent(drug.hospitalCode || '')}}`;
-
           // External NHI Link
           let queryUrl = drug.nhiLink;
           if (!queryUrl || queryUrl === 'https://info.nhi.gov.tw/IODE0000/IODE0000S06') {{
@@ -685,12 +682,9 @@ def build():
               <!-- 1. 序號 (Cross Freeze: Sticky Left 0) -->
               <td class="py-3 px-2 text-center font-mono text-slate-400 text-xs sticky left-0 bg-white group-hover:bg-slate-50 z-10 border-r border-slate-200">${{rowNum}}</td>
 
-              <!-- 2. 院內代碼 (Cross Freeze: Sticky Left 12) + TamisDrugP 連結 -->
+              <!-- 2. 院內代碼 (Cross Freeze: Sticky Left 12) -->
               <td class="py-3 px-3 sticky left-12 bg-white group-hover:bg-slate-50 z-10 border-r-2 border-slate-300 shadow-[4px_0_6px_-2px_rgba(0,0,0,0.06)]">
-                <a href="${{tamisUrl}}" target="_blank" title="點擊直接連線嘉義醫院處方藥品系統 (TamisDrugP) 查詢「${{escapeHtml(drug.hospitalCode)}}」" class="inline-flex items-center space-x-1 group/hcode font-mono font-bold text-teal-700 bg-teal-50 hover:bg-teal-100 px-2 py-0.5 rounded border border-teal-200 hover:border-teal-400 transition shadow-2xs">
-                  <span>${{escapeHtml(drug.hospitalCode || "-")}}</span>
-                  <i data-lucide="external-link" class="w-3 h-3 text-teal-500 group-hover/hcode:text-teal-700"></i>
-                </a>
+                <span class="bg-slate-100 text-slate-900 px-2 py-0.5 rounded border border-slate-300 text-xs font-bold font-mono tracking-wide">${{escapeHtml(drug.hospitalCode || "-")}}</span>
               </td>
 
               <!-- 3. 英文商品名 (+ 中文品名與 ATC 標籤) -->
@@ -729,19 +723,15 @@ def build():
               <td class="py-3 px-3 w-36 min-w-[130px]">${{ruleDisplay}}</td>
 
               <!-- 10. 查詢/操作 -->
-              <td class="py-3 px-3 text-center w-36">
+              <td class="py-3 px-3 text-center w-24">
                 <div class="flex items-center justify-center space-x-1.5">
-                  <a href="${{tamisUrl}}" target="_blank" title="開啟嘉義醫院處方系統藥品介紹 (代碼: ${{escapeHtml(drug.hospitalCode)}})" class="inline-flex items-center px-2 py-1 text-[11px] font-bold rounded-md bg-teal-50 text-teal-700 hover:bg-teal-100 border border-teal-200 transition shadow-2xs hover:border-teal-300">
-                    <i data-lucide="hospital" class="w-3.5 h-3.5 mr-1 text-teal-600"></i>
-                    <span>藥品介紹</span>
-                  </a>
-                  <a href="${{queryUrl}}" target="_blank" title="健保署/食藥署官網品項查詢" class="p-1 text-slate-400 hover:text-sky-600 hover:bg-sky-50 rounded-md transition">
+                  <a href="${{queryUrl}}" target="_blank" title="健保署/食藥署官網品項查詢" class="p-1.5 text-slate-400 hover:text-sky-600 hover:bg-sky-50 rounded-md transition border border-transparent hover:border-sky-200">
                     <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
                   </a>
-                  <button onclick="openEditDrugModal('${{drug.id}}')" title="編輯藥品" class="p-1 text-slate-400 hover:text-teal-600 hover:bg-teal-50 rounded-md transition">
+                  <button onclick="openEditDrugModal('${{drug.id}}')" title="編輯藥品" class="p-1.5 text-slate-400 hover:text-teal-600 hover:bg-teal-50 rounded-md transition border border-transparent hover:border-teal-200">
                     <i data-lucide="edit-2" class="w-3.5 h-3.5"></i>
                   </button>
-                  <button onclick="deleteDrug('${{drug.id}}')" title="刪除" class="p-1 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-md transition">
+                  <button onclick="deleteDrug('${{drug.id}}')" title="刪除" class="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-md transition border border-transparent hover:border-rose-200">
                     <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                   </button>
                 </div>
@@ -960,12 +950,11 @@ def build():
         "健保給付規定章節": d.ruleSection || "無特殊章節",
         "給付規定PDF連結": d.ruleLink || "",
         "ATC碼": d.atc || "",
-        "嘉義醫院藥品介紹連結": `https://rfid-server.chyi.mohw.gov.tw/TamisDrugP/DD1_IDrugChkPop.aspx?lblId=${{encodeURIComponent(d.hospitalCode || '')}}`,
         "健保/食藥署查詢連結": d.nhiLink || ""
       }}));
 
       const ws = XLSX.utils.json_to_sheet(exportData);
-      ws['!cols'] = [{{ wch: 8 }}, {{ wch: 14 }}, {{ wch: 35 }}, {{ wch: 25 }}, {{ wch: 30 }}, {{ wch: 18 }}, {{ wch: 10 }}, {{ wch: 16 }}, {{ wch: 14 }}, {{ wch: 20 }}, {{ wch: 40 }}, {{ wch: 12 }}, {{ wch: 45 }}, {{ wch: 40 }}];
+      ws['!cols'] = [{{ wch: 8 }}, {{ wch: 14 }}, {{ wch: 35 }}, {{ wch: 25 }}, {{ wch: 30 }}, {{ wch: 18 }}, {{ wch: 10 }}, {{ wch: 16 }}, {{ wch: 14 }}, {{ wch: 20 }}, {{ wch: 40 }}, {{ wch: 12 }}, {{ wch: 40 }}];
       const wb = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, ws, "醫院藥品主檔(含健保價)");
       const today = new Date().toISOString().slice(0, 10).replace(/-/g, "");
@@ -1131,7 +1120,7 @@ def build():
 """
     with open('index.html', 'w', encoding='utf-8') as f:
         f.write(html_content)
-    print("SUCCESS: index.html compiled with updated column ordering and TamisDrugP integration!")
+    print("SUCCESS: index.html compiled with exact column sequence and clean actions!")
 
 if __name__ == '__main__':
     build()
