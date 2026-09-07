@@ -64,9 +64,9 @@ def build():
           <div>
             <div class="flex items-center space-x-2">
               <h1 class="text-lg font-bold text-slate-900 tracking-tight">醫院藥品主檔與健保代碼價格管理系統</h1>
-              <span class="px-2 py-0.5 text-xs font-semibold rounded-full bg-teal-100 text-teal-800 border border-teal-200">v2.0 健保連線版</span>
+              <span class="px-2 py-0.5 text-xs font-semibold rounded-full bg-teal-100 text-teal-800 border border-teal-200">v2.1 處方系統連線版</span>
             </div>
-            <p class="text-xs text-slate-500">院內碼 • 健保碼 • 中文品名 • ATC 碼 • 健保支付價 • 給付規定章節與 PDF 連結</p>
+            <p class="text-xs text-slate-500">院內碼 • 英文商品名 • 學名主成分 • 規格/包裝 • 劑型 • 健保碼 • 健保支付價 • 給付規定 • 嘉義醫院 TamisDrugP 查詢</p>
           </div>
         </div>
 
@@ -148,7 +148,7 @@ def build():
           <input 
             type="text" 
             id="searchInput" 
-            placeholder="搜尋商品名、中文名、學名/成分、院內代碼、健保碼、ATC 碼、給付規定章節..." 
+            placeholder="搜尋院內代碼、英文商品名、學名/成分、健保中文名、健保碼、規格、給付規定章節..." 
             oninput="handleSearch()"
             class="w-full pl-9 pr-4 py-2 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:outline-hidden focus:ring-2 focus:ring-teal-500 focus:bg-white transition"
           >
@@ -188,7 +188,7 @@ def build():
           <span class="inline-flex items-center"><span class="w-2 h-2 rounded-full bg-emerald-500 mr-1.5"></span>綠標：健保給付品項</span>
           <span class="inline-flex items-center"><span class="w-2 h-2 rounded-full bg-indigo-500 mr-1.5"></span>藍標：附給付規定章節 PDF</span>
           <span class="inline-flex items-center"><span class="w-2 h-2 rounded-full bg-amber-500 mr-1.5"></span>黃標：自費/未收載</span>
-          <span class="text-slate-400 font-normal ml-2 hidden lg:inline">💡 提示：點擊給付規定章節可直接下載官方 PDF 規範</span>
+          <span class="inline-flex items-center text-teal-700 font-medium ml-1"><i data-lucide="hospital" class="w-3.5 h-3.5 mr-1 text-teal-600"></i>支援點擊院內碼直連嘉義醫院處方系統 (TamisDrugP)</span>
         </div>
         <div class="flex flex-wrap items-center space-x-2">
           <button onclick="loadEnrichedPreset()" class="text-teal-700 font-semibold hover:underline bg-teal-50 hover:bg-teal-100 px-2 py-1 rounded-md border border-teal-200 transition flex items-center space-x-1">
@@ -209,43 +209,73 @@ def build():
             <tr>
               <!-- Cross Freeze: Column 1 (Index) Sticky Top + Left -->
               <th class="py-3 px-2 w-12 text-center sticky top-0 left-0 bg-slate-100 z-30 border-r border-slate-200">序號</th>
+              
               <!-- Cross Freeze: Column 2 (Hospital Code) Sticky Top + Left -->
-              <th class="py-3 px-3 w-28 cursor-pointer hover:bg-slate-200 transition sticky top-0 left-12 bg-slate-100 z-30 border-r-2 border-slate-300 shadow-[4px_0_6px_-2px_rgba(0,0,0,0.06)]" onclick="toggleSort('hospitalCode')">
+              <th class="py-3 px-3 w-32 cursor-pointer hover:bg-slate-200 transition sticky top-0 left-12 bg-slate-100 z-30 border-r-2 border-slate-300 shadow-[4px_0_6px_-2px_rgba(0,0,0,0.06)]" onclick="toggleSort('hospitalCode')">
                 <div class="flex items-center space-x-1">
                   <span>院內代碼</span>
                   <i data-lucide="arrow-up-down" class="w-3 h-3 text-slate-400"></i>
                 </div>
               </th>
-              <th class="py-3 px-3 w-28 cursor-pointer hover:bg-slate-100 transition" onclick="toggleSort('nhiCode')">
-                <div class="flex items-center space-x-1">
-                  <span>健保代碼</span>
-                  <i data-lucide="arrow-up-down" class="w-3 h-3 text-slate-400"></i>
-                </div>
-              </th>
-              <th class="py-3 px-3 w-40 min-w-[130px] cursor-pointer hover:bg-slate-100 transition" onclick="toggleSort('chineseName')">
-                <div class="flex items-center space-x-1">
-                  <span>健保中文品名</span>
-                  <i data-lucide="arrow-up-down" class="w-3 h-3 text-slate-400"></i>
-                </div>
-              </th>
-              <th class="py-3 px-3 w-48 min-w-[160px] cursor-pointer hover:bg-slate-100 transition" onclick="toggleSort('brandName')">
+
+              <!-- Column 3: Brand Name -->
+              <th class="py-3 px-3 w-52 min-w-[180px] cursor-pointer hover:bg-slate-100 transition" onclick="toggleSort('brandName')">
                 <div class="flex items-center space-x-1">
                   <span>英文商品名</span>
                   <i data-lucide="arrow-up-down" class="w-3 h-3 text-slate-400"></i>
                 </div>
               </th>
-              <!-- Generic Name Column: Compact width, readable header -->
-              <th class="py-3 px-3 w-48 min-w-[150px] bg-teal-50/50 text-teal-900 border-x border-teal-100/60 font-bold">學名 / 主成分</th>
-              <th class="py-3 px-3 w-24 text-right cursor-pointer hover:bg-slate-100 transition" onclick="toggleSort('price')">
+
+              <!-- Column 4: Generic Name (Wider, larger font, multiline) -->
+              <th class="py-3 px-3 w-52 min-w-[180px] bg-teal-50/50 text-teal-900 border-x border-teal-100/60 font-bold cursor-pointer hover:bg-teal-100/50 transition" onclick="toggleSort('genericName')">
+                <div class="flex items-center space-x-1">
+                  <span>學名 / 主成分</span>
+                  <i data-lucide="arrow-up-down" class="w-3 h-3 text-teal-700"></i>
+                </div>
+              </th>
+
+              <!-- Column 5: Strength / Package -->
+              <th class="py-3 px-3 w-32 min-w-[120px] cursor-pointer hover:bg-slate-100 transition" onclick="toggleSort('strength')">
+                <div class="flex items-center space-x-1">
+                  <span>規格 / 包裝</span>
+                  <i data-lucide="arrow-up-down" class="w-3 h-3 text-slate-400"></i>
+                </div>
+              </th>
+
+              <!-- Column 6: Dosage Form -->
+              <th class="py-3 px-3 w-16 text-center cursor-pointer hover:bg-slate-100 transition" onclick="toggleSort('dosageForm')">
+                <div class="flex items-center justify-center space-x-1">
+                  <span>劑型</span>
+                  <i data-lucide="arrow-up-down" class="w-3 h-3 text-slate-400"></i>
+                </div>
+              </th>
+
+              <!-- Column 7: NHI Code -->
+              <th class="py-3 px-3 w-32 min-w-[110px] cursor-pointer hover:bg-slate-100 transition" onclick="toggleSort('nhiCode')">
+                <div class="flex items-center space-x-1">
+                  <span>健保代碼</span>
+                  <i data-lucide="arrow-up-down" class="w-3 h-3 text-slate-400"></i>
+                </div>
+              </th>
+
+              <!-- Column 8: NHI Price -->
+              <th class="py-3 px-3 w-28 text-right cursor-pointer hover:bg-slate-100 transition" onclick="toggleSort('price')">
                 <div class="flex items-center justify-end space-x-1">
                   <span>健保支付價</span>
                   <i data-lucide="arrow-up-down" class="w-3 h-3 text-slate-400"></i>
                 </div>
               </th>
-              <th class="py-3 px-3 w-32 min-w-[120px]">健保給付規定</th>
-              <th class="py-3 px-3 w-28">規格 / 包裝</th>
-              <th class="py-3 px-3 w-16 text-center">劑型</th>
-              <th class="py-3 px-3 w-20 text-center">查詢/操作</th>
+
+              <!-- Column 9: NHI Payment Rules -->
+              <th class="py-3 px-3 w-36 min-w-[130px] cursor-pointer hover:bg-slate-100 transition" onclick="toggleSort('ruleSection')">
+                <div class="flex items-center space-x-1">
+                  <span>健保給付規定</span>
+                  <i data-lucide="arrow-up-down" class="w-3 h-3 text-slate-400"></i>
+                </div>
+              </th>
+
+              <!-- Column 10: Links & Actions -->
+              <th class="py-3 px-3 w-36 text-center">查詢/操作</th>
             </tr>
           </thead>
           <tbody id="drugTableBody" class="divide-y divide-slate-100 text-xs text-slate-700"></tbody>
@@ -276,8 +306,8 @@ def build():
 
   <footer class="bg-white border-t border-slate-200 py-4 mt-8">
     <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-500 space-y-1">
-      <p>醫院藥品主檔與健保代碼價格管理系統 • 資料來源：衛生福利部中央健康保險署開放資料庫</p>
-      <p class="text-slate-400">本系統純前端本機運作，資料安全保密不外傳 • 支援健保代碼、中文名、支付價與給付規定 PDF 直連</p>
+      <p>醫院藥品主檔與健保代碼價格管理系統 • 資料來源：衛生福利部中央健康保險署開放資料庫 & 衛福部嘉義醫院處方藥品系統</p>
+      <p class="text-slate-400">本系統純前端本機運作，資料安全保密不外傳 • 支援健保代碼、中文名、支付價、給付規定 PDF 與 TamisDrugP 藥品介紹直連</p>
     </div>
   </footer>
 
@@ -348,8 +378,20 @@ def build():
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
+            <label class="block font-semibold text-slate-700 mb-1">英文商品名 (Brand Name) <span class="text-rose-500">*</span></label>
+            <input type="text" id="formBrandName" required placeholder="例：Norvasc Tablets 5mg" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:outline-hidden">
+          </div>
+
+          <div>
             <label class="block font-semibold text-slate-700 mb-1">健保中文品名 (Chinese Name)</label>
             <input type="text" id="formChineseName" placeholder="例：脈優錠 5 毫克" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:outline-hidden">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">學名 / 主成分 (Generic Name) <span class="text-rose-500">*</span></label>
+            <input type="text" id="formGenericName" required placeholder="例：Amlodipine besylate" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:outline-hidden">
           </div>
 
           <div>
@@ -358,14 +400,16 @@ def build():
           </div>
         </div>
 
-        <div>
-          <label class="block font-semibold text-slate-700 mb-1">英文商品名 (Brand Name) <span class="text-rose-500">*</span></label>
-          <input type="text" id="formBrandName" required placeholder="例：Norvasc Tablets 5mg" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:outline-hidden">
-        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">規格劑量 / 包裝 (Strength/Unit)</label>
+            <input type="text" id="formStrength" placeholder="例：5mg/tab (Box)" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:outline-hidden">
+          </div>
 
-        <div>
-          <label class="block font-semibold text-slate-700 mb-1">學名 / 主成分 (Generic Name) <span class="text-rose-500">*</span></label>
-          <input type="text" id="formGenericName" required placeholder="例：Amlodipine besylate" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:outline-hidden">
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">劑型 (Dosage Form)</label>
+            <input type="text" id="formDosageForm" placeholder="例：O, I, E, 錠劑、膠囊劑" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:outline-hidden">
+          </div>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -376,18 +420,6 @@ def build():
           <div>
             <label class="block font-semibold text-slate-700 mb-1">給付規定 PDF 連結</label>
             <input type="text" id="formRuleLink" placeholder="https://info.nhi.gov.tw/api/..." class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:outline-hidden font-mono text-[11px]">
-          </div>
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label class="block font-semibold text-slate-700 mb-1">規格劑量 / 包裝 (Strength/Unit)</label>
-            <input type="text" id="formStrength" placeholder="例：5mg/tab (Box)" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:outline-hidden">
-          </div>
-
-          <div>
-            <label class="block font-semibold text-slate-700 mb-1">劑型 (Dosage Form)</label>
-            <input type="text" id="formDosageForm" placeholder="例：O, I, E, 錠劑、膠囊劑" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:outline-hidden">
           </div>
         </div>
 
@@ -409,7 +441,7 @@ def build():
     // Embedded 761 Clinical Drugs with Matched NHI Codes, Prices and Payment Rules
     const HOSPITAL_ENRICHED_PRESET = {json_data};
 
-    const STORAGE_KEY = "hospital_drug_master_db_v4";
+    const STORAGE_KEY = "hospital_drug_master_db_v5";
     let drugs = [];
     let currentPage = 1;
     let pageSize = 15;
@@ -594,7 +626,7 @@ def build():
       if (paginated.length === 0) {{
         tbody.innerHTML = `
           <tr>
-            <td colspan="11" class="py-12 text-center text-slate-400">
+            <td colspan="10" class="py-12 text-center text-slate-400">
               <i data-lucide="inbox" class="w-10 h-10 mx-auto mb-2 text-slate-300"></i>
               <p class="text-sm font-medium">查無符合條件之藥品資料</p>
               <p class="text-xs text-slate-400 mt-1">請嘗試調整搜尋關鍵字或點擊「新增單筆」建立主檔</p>
@@ -639,7 +671,10 @@ def build():
             }}
           }}
 
-          // Search / Query External Link
+          // TamisDrugP URL: 自動搜尋該藥品之院內代碼介紹頁面
+          const tamisUrl = `https://rfid-server.chyi.mohw.gov.tw/TamisDrugP/DD1_IDrugChkPop.aspx?lblId=${{encodeURIComponent(drug.hospitalCode || '')}}`;
+
+          // External NHI Link
           let queryUrl = drug.nhiLink;
           if (!queryUrl || queryUrl === 'https://info.nhi.gov.tw/IODE0000/IODE0000S06') {{
             queryUrl = `https://info.nhi.gov.tw/IODE0000/IODE0000S06`;
@@ -647,43 +682,66 @@ def build():
 
           return `
             <tr class="hover:bg-teal-50/50 transition group border-b border-slate-100">
-              <!-- Cross Freeze: Sticky Left Index -->
+              <!-- 1. 序號 (Cross Freeze: Sticky Left 0) -->
               <td class="py-3 px-2 text-center font-mono text-slate-400 text-xs sticky left-0 bg-white group-hover:bg-slate-50 z-10 border-r border-slate-200">${{rowNum}}</td>
-              <!-- Cross Freeze: Sticky Left Hospital Code -->
-              <td class="py-3 px-3 font-bold text-slate-900 font-mono tracking-wide sticky left-12 bg-white group-hover:bg-slate-50 z-10 border-r-2 border-slate-300 shadow-[4px_0_6px_-2px_rgba(0,0,0,0.06)]">
-                <span class="bg-slate-100 text-slate-900 px-1.5 py-0.5 rounded border border-slate-300 text-xs font-bold">${{escapeHtml(drug.hospitalCode || "-")}}</span>
+
+              <!-- 2. 院內代碼 (Cross Freeze: Sticky Left 12) + TamisDrugP 連結 -->
+              <td class="py-3 px-3 sticky left-12 bg-white group-hover:bg-slate-50 z-10 border-r-2 border-slate-300 shadow-[4px_0_6px_-2px_rgba(0,0,0,0.06)]">
+                <a href="${{tamisUrl}}" target="_blank" title="點擊直接連線嘉義醫院處方藥品系統 (TamisDrugP) 查詢「${{escapeHtml(drug.hospitalCode)}}」" class="inline-flex items-center space-x-1 group/hcode font-mono font-bold text-teal-700 bg-teal-50 hover:bg-teal-100 px-2 py-0.5 rounded border border-teal-200 hover:border-teal-400 transition shadow-2xs">
+                  <span>${{escapeHtml(drug.hospitalCode || "-")}}</span>
+                  <i data-lucide="external-link" class="w-3 h-3 text-teal-500 group-hover/hcode:text-teal-700"></i>
+                </a>
               </td>
-              <td class="py-3 px-3">${{nhiDisplay}}</td>
-              <td class="py-3 px-3 font-medium text-slate-900 w-40 min-w-[130px]">
-                <div class="break-words whitespace-normal text-xs leading-snug" title="${{escapeHtml(drug.chineseName || '-')}}">${{escapeHtml(drug.chineseName || "-")}}</div>
-              </td>
-              <td class="py-3 px-3 font-semibold text-slate-800 w-48 min-w-[160px]">
-                <div class="break-words whitespace-normal text-xs leading-snug" title="${{escapeHtml(drug.brandName || '-')}}">${{escapeHtml(drug.brandName || "-")}}</div>
+
+              <!-- 3. 英文商品名 (+ 中文品名與 ATC 標籤) -->
+              <td class="py-3 px-3 w-52 min-w-[180px]">
+                <div class="break-words whitespace-normal text-xs font-semibold text-slate-900 leading-snug" title="${{escapeHtml(drug.brandName || '-')}}">
+                  ${{escapeHtml(drug.brandName || "-")}}
+                </div>
+                ${{drug.chineseName ? `<div class="text-slate-500 text-[11px] font-normal leading-snug mt-0.5 break-words" title="${{escapeHtml(drug.chineseName)}}">${{escapeHtml(drug.chineseName)}}</div>` : ''}}
                 ${{drug.atc ? `<span class="inline-block mt-1 text-[10px] font-mono text-teal-800 bg-teal-50 px-1.5 py-0.5 rounded border border-teal-200 font-semibold">${{escapeHtml(drug.atc)}}</span>` : ''}}
               </td>
-              <!-- Enhanced Generic Name: Larger text, not too wide, word wrap enabled -->
-              <td class="py-3 px-3 bg-teal-50/30 border-x border-teal-100/60 w-48 min-w-[150px]">
+
+              <!-- 4. 學名 / 主成分 (加粗加大字體 13px，支援自動換行) -->
+              <td class="py-3 px-3 bg-teal-50/30 border-x border-teal-100/60 w-52 min-w-[180px]">
                 <div class="text-[13px] font-bold text-slate-900 break-words whitespace-normal leading-snug" title="${{escapeHtml(drug.genericName || '-')}}">
                   ${{escapeHtml(drug.genericName || "-")}}
                 </div>
               </td>
-              <td class="py-3 px-3 text-right font-mono">${{priceDisplay}}</td>
-              <td class="py-3 px-3">${{ruleDisplay}}</td>
-              <td class="py-3 px-3 text-slate-700 text-xs">
+
+              <!-- 5. 規格 / 包裝 -->
+              <td class="py-3 px-3 text-slate-700 text-xs w-32 min-w-[120px]">
                 <div class="break-words whitespace-normal leading-snug">${{escapeHtml(drug.strength || "-")}}</div>
               </td>
-              <td class="py-3 px-3 text-center">
-                <span class="bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded text-[11px] font-semibold font-mono">${{escapeHtml(drug.dosageForm || "-")}}</span>
+
+              <!-- 6. 劑型 -->
+              <td class="py-3 px-3 text-center w-16">
+                <span class="bg-slate-100 text-slate-700 px-2 py-0.5 rounded text-[11px] font-semibold font-mono">${{escapeHtml(drug.dosageForm || "-")}}</span>
               </td>
-              <td class="py-3 px-3 text-center">
-                <div class="flex items-center justify-center space-x-1">
-                  <a href="${{queryUrl}}" target="_blank" title="健保署/食藥署官網品項查詢" class="p-1.5 text-slate-400 hover:text-sky-600 hover:bg-sky-50 rounded transition">
+
+              <!-- 7. 健保代碼 -->
+              <td class="py-3 px-3 w-32 min-w-[110px]">${{nhiDisplay}}</td>
+
+              <!-- 8. 健保支付價 -->
+              <td class="py-3 px-3 text-right font-mono w-28">${{priceDisplay}}</td>
+
+              <!-- 9. 健保給付規定 -->
+              <td class="py-3 px-3 w-36 min-w-[130px]">${{ruleDisplay}}</td>
+
+              <!-- 10. 查詢/操作 -->
+              <td class="py-3 px-3 text-center w-36">
+                <div class="flex items-center justify-center space-x-1.5">
+                  <a href="${{tamisUrl}}" target="_blank" title="開啟嘉義醫院處方系統藥品介紹 (代碼: ${{escapeHtml(drug.hospitalCode)}})" class="inline-flex items-center px-2 py-1 text-[11px] font-bold rounded-md bg-teal-50 text-teal-700 hover:bg-teal-100 border border-teal-200 transition shadow-2xs hover:border-teal-300">
+                    <i data-lucide="hospital" class="w-3.5 h-3.5 mr-1 text-teal-600"></i>
+                    <span>藥品介紹</span>
+                  </a>
+                  <a href="${{queryUrl}}" target="_blank" title="健保署/食藥署官網品項查詢" class="p-1 text-slate-400 hover:text-sky-600 hover:bg-sky-50 rounded-md transition">
                     <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
                   </a>
-                  <button onclick="openEditDrugModal('${{drug.id}}')" title="編輯藥品" class="p-1.5 text-slate-400 hover:text-teal-600 hover:bg-teal-50 rounded transition">
+                  <button onclick="openEditDrugModal('${{drug.id}}')" title="編輯藥品" class="p-1 text-slate-400 hover:text-teal-600 hover:bg-teal-50 rounded-md transition">
                     <i data-lucide="edit-2" class="w-3.5 h-3.5"></i>
                   </button>
-                  <button onclick="deleteDrug('${{drug.id}}')" title="刪除" class="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded transition">
+                  <button onclick="deleteDrug('${{drug.id}}')" title="刪除" class="p-1 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-md transition">
                     <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                   </button>
                 </div>
@@ -766,16 +824,16 @@ def build():
       document.getElementById("modalTitle").innerText = "編輯藥品主檔與健保資料";
       document.getElementById("formDrugId").value = drug.id;
       document.getElementById("formHospitalCode").value = drug.hospitalCode || "";
-      document.getElementById("formNhiCode").value = drug.nhiCode || "";
-      document.getElementById("formPrice").value = drug.price || "";
-      document.getElementById("formAtc").value = drug.atc || "";
       document.getElementById("formBrandName").value = drug.brandName || "";
       document.getElementById("formChineseName").value = drug.chineseName || "";
       document.getElementById("formGenericName").value = drug.genericName || "";
-      document.getElementById("formRuleSection").value = drug.ruleSection || "";
-      document.getElementById("formRuleLink").value = drug.ruleLink || "";
       document.getElementById("formStrength").value = drug.strength || "";
       document.getElementById("formDosageForm").value = drug.dosageForm || "";
+      document.getElementById("formNhiCode").value = drug.nhiCode || "";
+      document.getElementById("formPrice").value = drug.price || "";
+      document.getElementById("formRuleSection").value = drug.ruleSection || "";
+      document.getElementById("formRuleLink").value = drug.ruleLink || "";
+      document.getElementById("formAtc").value = drug.atc || "";
 
       handleNhiInput(drug.nhiCode || "");
       document.getElementById("formHospitalCodeWarn").classList.add("hidden");
@@ -805,16 +863,16 @@ def build():
       e.preventDefault();
       const id = document.getElementById("formDrugId").value;
       const hospitalCode = document.getElementById("formHospitalCode").value.trim().toUpperCase();
-      const nhiCode = document.getElementById("formNhiCode").value.trim().toUpperCase();
-      const price = document.getElementById("formPrice").value.trim();
-      const atc = document.getElementById("formAtc").value.trim().toUpperCase();
       const brandName = document.getElementById("formBrandName").value.trim();
       const chineseName = document.getElementById("formChineseName").value.trim();
       const genericName = document.getElementById("formGenericName").value.trim();
-      const ruleSection = document.getElementById("formRuleSection").value.trim();
-      const ruleLink = document.getElementById("formRuleLink").value.trim();
       const strength = document.getElementById("formStrength").value.trim();
       const dosageForm = document.getElementById("formDosageForm").value.trim();
+      const nhiCode = document.getElementById("formNhiCode").value.trim().toUpperCase();
+      const price = document.getElementById("formPrice").value.trim();
+      const ruleSection = document.getElementById("formRuleSection").value.trim();
+      const ruleLink = document.getElementById("formRuleLink").value.trim();
+      const atc = document.getElementById("formAtc").value.trim().toUpperCase();
 
       const duplicate = drugs.find(d => d.hospitalCode.toUpperCase() === hospitalCode && d.id !== id);
       if (duplicate) {{
@@ -827,23 +885,23 @@ def build():
       if (id) {{
         const index = drugs.findIndex(d => d.id === id);
         if (index !== -1) {{
-          drugs[index] = {{ ...drugs[index], id, hospitalCode, nhiCode, price, atc, brandName, chineseName, genericName, ruleSection, ruleLink, strength, dosageForm }};
+          drugs[index] = {{ ...drugs[index], id, hospitalCode, brandName, chineseName, genericName, strength, dosageForm, nhiCode, price, ruleSection, ruleLink, atc }};
           showToast("已更新藥品主檔與健保資料", "success");
         }}
       }} else {{
         const newDrug = {{
           id: "d_" + Date.now(),
           hospitalCode,
-          nhiCode,
-          price,
-          atc,
           brandName,
           chineseName,
           genericName,
-          ruleSection,
-          ruleLink,
           strength,
           dosageForm,
+          nhiCode,
+          price,
+          ruleSection,
+          ruleLink,
+          atc,
           nhiLink: "https://info.nhi.gov.tw/IODE0000/IODE0000S06"
         }};
         drugs.unshift(newDrug);
@@ -867,16 +925,16 @@ def build():
     }}
 
     function downloadExcelTemplate() {{
-      const headers = ["院內代碼", "健保代碼", "ATC碼", "英文商品名", "健保中文品名", "學名/成分", "規格劑量", "劑型", "健保支付價", "健保給付規定章節", "給付規定PDF連結"];
+      const headers = ["院內代碼", "英文商品名", "學名/主成分", "規格/包裝", "劑型", "健保代碼", "健保支付價", "健保給付規定章節", "給付規定PDF連結", "健保中文品名", "ATC碼"];
       const templateData = [
         headers,
-        ["ONORV5", "BC19248100", "C08CA01", "Norvasc Tablets 5mg", "脈優錠 5 毫克", "Amlodipine besylate", "5mg/tab", "O", "5.60", "無特殊章節", ""],
-        ["OGLUC5", "AC34125100", "A10BA02", "Glucophage Tablets 500mg", "庫魯化錠 500 毫克", "Metformin hydrochloride", "500mg/tab", "O", "1.50", "無特殊章節", ""],
-        ["ARIO25", "BC27318100", "N05AX12", "Abik OD", "艾比克口崩錠10毫克", "AripiprazoleOralDispersible", "10mg (Tab)", "O", "29.60", "1.2.2.2.", "https://info.nhi.gov.tw/api/INAE3000/INAE3000S01/getPDF?DurgFileName=1.2.2.2._20230701.pdf"]
+        ["ONORV5", "Norvasc Tablets 5mg", "Amlodipine besylate", "5mg/tab", "O", "BC19248100", "5.60", "無特殊章節", "", "脈優錠 5 毫克", "C08CA01"],
+        ["OGLUC5", "Glucophage Tablets 500mg", "Metformin hydrochloride", "500mg/tab", "O", "AC34125100", "1.50", "無特殊章節", "", "庫魯化錠 500 毫克", "A10BA02"],
+        ["ARIO25", "Abik OD", "AripiprazoleOralDispersible", "10mg (Tab)", "O", "BC27318100", "29.60", "1.2.2.2.", "https://info.nhi.gov.tw/api/INAE3000/INAE3000S01/getPDF?DurgFileName=1.2.2.2._20230701.pdf", "艾比克口崩錠10毫克", "N05AX12"]
       ];
 
       const ws = XLSX.utils.aoa_to_sheet(templateData);
-      ws['!cols'] = [{{ wch: 14 }}, {{ wch: 16 }}, {{ wch: 12 }}, {{ wch: 35 }}, {{ wch: 25 }}, {{ wch: 30 }}, {{ wch: 18 }}, {{ wch: 10 }}, {{ wch: 14 }}, {{ wch: 20 }}, {{ wch: 40 }}];
+      ws['!cols'] = [{{ wch: 14 }}, {{ wch: 35 }}, {{ wch: 30 }}, {{ wch: 18 }}, {{ wch: 10 }}, {{ wch: 16 }}, {{ wch: 14 }}, {{ wch: 20 }}, {{ wch: 40 }}, {{ wch: 25 }}, {{ wch: 12 }}];
       const wb = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, ws, "藥品代碼匯入標準範本");
       XLSX.writeFile(wb, "藥品代碼匯入標準範本.xlsx");
@@ -892,21 +950,22 @@ def build():
       const exportData = drugs.map((d, i) => ({{
         "序號": i + 1,
         "院內代碼": d.hospitalCode || "",
-        "健保代碼": d.nhiCode || "自費/未收載",
-        "ATC碼": d.atc || "",
         "英文商品名": d.brandName || "",
         "健保中文品名": d.chineseName || "",
         "學名/主成分": d.genericName || "",
-        "規格劑量/包裝": d.strength || "",
+        "規格/包裝": d.strength || "",
         "劑型": d.dosageForm || "",
+        "健保代碼": d.nhiCode || "自費/未收載",
         "健保支付價": d.price || "",
         "健保給付規定章節": d.ruleSection || "無特殊章節",
         "給付規定PDF連結": d.ruleLink || "",
+        "ATC碼": d.atc || "",
+        "嘉義醫院藥品介紹連結": `https://rfid-server.chyi.mohw.gov.tw/TamisDrugP/DD1_IDrugChkPop.aspx?lblId=${{encodeURIComponent(d.hospitalCode || '')}}`,
         "健保/食藥署查詢連結": d.nhiLink || ""
       }}));
 
       const ws = XLSX.utils.json_to_sheet(exportData);
-      ws['!cols'] = [{{ wch: 8 }}, {{ wch: 14 }}, {{ wch: 16 }}, {{ wch: 12 }}, {{ wch: 35 }}, {{ wch: 25 }}, {{ wch: 30 }}, {{ wch: 18 }}, {{ wch: 10 }}, {{ wch: 14 }}, {{ wch: 20 }}, {{ wch: 40 }}, {{ wch: 40 }}];
+      ws['!cols'] = [{{ wch: 8 }}, {{ wch: 14 }}, {{ wch: 35 }}, {{ wch: 25 }}, {{ wch: 30 }}, {{ wch: 18 }}, {{ wch: 10 }}, {{ wch: 16 }}, {{ wch: 14 }}, {{ wch: 20 }}, {{ wch: 40 }}, {{ wch: 12 }}, {{ wch: 45 }}, {{ wch: 40 }}];
       const wb = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, ws, "醫院藥品主檔(含健保價)");
       const today = new Date().toISOString().slice(0, 10).replace(/-/g, "");
@@ -968,17 +1027,17 @@ def build():
           const getColIdx = (keywords) => headers.findIndex(h => keywords.some(k => h.includes(k)));
 
           const hCodeIdx = getColIdx(["院內代碼", "院內碼", "藥品代碼", "hospital", "院內藥碼"]);
-          const nhiCodeIdx = getColIdx(["健保代碼", "健保碼", "健保", "nhi"]);
-          const atcIdx = getColIdx(["atc", "atc碼", "atc代碼"]);
           const brandIdx = getColIdx(["英文商品名", "商品名", "英文名", "品名", "brand", "trade"]);
-          const chineseIdx = getColIdx(["中文品名", "中文名", "中文", "chinese"]);
           const genericIdx = getColIdx(["學名", "成分", "主成分", "generic"]);
           const strengthIdx = getColIdx(["規格", "劑量", "含量", "strength", "spec"]);
           const unitIdx = getColIdx(["單位", "包裝", "unit"]);
           const dosageIdx = getColIdx(["劑型", "form", "dosage"]);
+          const nhiCodeIdx = getColIdx(["健保代碼", "健保碼", "健保", "nhi"]);
           const priceIdx = getColIdx(["支付價", "健保價", "價格", "price"]);
           const ruleIdx = getColIdx(["給付規定", "章節", "rule"]);
           const ruleLinkIdx = getColIdx(["給付規定pdf", "規定連結", "rulelink"]);
+          const chineseIdx = getColIdx(["中文品名", "中文名", "中文", "chinese"]);
+          const atcIdx = getColIdx(["atc", "atc碼", "atc代碼"]);
 
           const parsedItems = [];
           for (let i = 1; i < rawRows.length; i++) {{
@@ -986,34 +1045,34 @@ def build():
             if (!row || row.length === 0) continue;
 
             const hospitalCode = (hCodeIdx !== -1 && row[hCodeIdx] ? row[hCodeIdx].toString().trim() : "").toUpperCase();
-            const nhiCode = (nhiCodeIdx !== -1 && row[nhiCodeIdx] ? row[nhiCodeIdx].toString().trim() : "").toUpperCase();
-            const atc = (atcIdx !== -1 && row[atcIdx] ? row[atcIdx].toString().trim() : "").toUpperCase();
             const brandName = brandIdx !== -1 && row[brandIdx] ? row[brandIdx].toString().trim() : "";
-            const chineseName = chineseIdx !== -1 && row[chineseIdx] ? row[chineseIdx].toString().trim() : "";
             const genericName = genericIdx !== -1 && row[genericIdx] ? row[genericIdx].toString().trim() : "";
             const specVal = strengthIdx !== -1 && row[strengthIdx] ? row[strengthIdx].toString().trim() : "";
             const unitVal = unitIdx !== -1 && row[unitIdx] ? row[unitIdx].toString().trim() : "";
             const strength = (specVal && unitVal) ? `${{specVal}} (${{unitVal}})` : (specVal || unitVal);
             const dosageForm = dosageIdx !== -1 && row[dosageIdx] ? row[dosageIdx].toString().trim() : "";
+            const nhiCode = (nhiCodeIdx !== -1 && row[nhiCodeIdx] ? row[nhiCodeIdx].toString().trim() : "").toUpperCase();
             const price = priceIdx !== -1 && row[priceIdx] ? row[priceIdx].toString().trim() : "";
             const ruleSection = ruleIdx !== -1 && row[ruleIdx] ? row[ruleIdx].toString().trim() : "";
             const ruleLink = ruleLinkIdx !== -1 && row[ruleLinkIdx] ? row[ruleLinkIdx].toString().trim() : "";
+            const chineseName = chineseIdx !== -1 && row[chineseIdx] ? row[chineseIdx].toString().trim() : "";
+            const atc = (atcIdx !== -1 && row[atcIdx] ? row[atcIdx].toString().trim() : "").toUpperCase();
 
             if (!hospitalCode && !brandName && !genericName) continue;
 
             parsedItems.push({{
               id: "d_" + Date.now() + "_" + i,
               hospitalCode: hospitalCode || `TEMP_${{i}}`,
-              nhiCode,
-              atc,
               brandName: brandName || "未填寫品名",
-              chineseName,
               genericName: genericName || brandName,
               strength,
               dosageForm,
+              nhiCode,
               price,
               ruleSection,
               ruleLink,
+              chineseName,
+              atc,
               nhiLink: "https://info.nhi.gov.tw/IODE0000/IODE0000S06"
             }});
           }}
@@ -1072,7 +1131,7 @@ def build():
 """
     with open('index.html', 'w', encoding='utf-8') as f:
         f.write(html_content)
-    print("SUCCESS: index.html compiled with full NHI Codes, Chinese names, Prices and Rule PDFs!")
+    print("SUCCESS: index.html compiled with updated column ordering and TamisDrugP integration!")
 
 if __name__ == '__main__':
     build()
