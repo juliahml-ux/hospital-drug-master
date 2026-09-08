@@ -82,19 +82,32 @@ def build():
             <i data-lucide="qr-code" class="w-4 h-4 mr-1 text-slate-600"></i>
             手機 QR Code
           </button>
-          <button onclick="downloadExcelTemplate()" class="inline-flex items-center px-3 py-1.5 text-xs font-medium rounded-lg text-slate-700 bg-slate-100 hover:bg-slate-200 transition">
-            <i data-lucide="file-spreadsheet" class="w-4 h-4 mr-1 text-emerald-600"></i>
-            下載標準範本
-          </button>
-          <label class="cursor-pointer inline-flex items-center px-3 py-1.5 text-xs font-medium rounded-lg text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 transition shadow-xs">
-            <i data-lucide="upload" class="w-4 h-4 mr-1 text-sky-600"></i>
-            匯入 Excel / 清單
-            <input type="file" id="excelFileInput" accept=".xlsx, .xls, .csv" class="hidden" onchange="handleExcelUpload(event)">
-          </label>
+          
           <button onclick="exportToExcel()" class="inline-flex items-center px-3 py-1.5 text-xs font-medium rounded-lg text-white bg-emerald-600 hover:bg-emerald-700 transition shadow-sm shadow-emerald-600/20">
             <i data-lucide="download" class="w-4 h-4 mr-1"></i>
-            匯出 Excel (含臨床處方)
+            匯出 Excel
           </button>
+
+          <!-- Admin-Only Top Actions (Shown only when unlocked) -->
+          <div id="adminTopActions" class="hidden items-center space-x-2">
+            <button onclick="downloadExcelTemplate()" class="inline-flex items-center px-2.5 py-1.5 text-xs font-medium rounded-lg text-slate-700 bg-slate-100 hover:bg-slate-200 transition" title="下載標準 Excel 匯入範本">
+              <i data-lucide="file-spreadsheet" class="w-4 h-4 mr-1 text-emerald-600"></i>
+              標準範本
+            </button>
+            <label class="cursor-pointer inline-flex items-center px-2.5 py-1.5 text-xs font-medium rounded-lg text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 transition shadow-xs">
+              <i data-lucide="upload" class="w-4 h-4 mr-1 text-sky-600"></i>
+              匯入 Excel
+              <input type="file" id="excelFileInput" accept=".xlsx, .xls, .csv" class="hidden" onchange="handleExcelUpload(event)">
+            </label>
+          </div>
+
+          <!-- Admin Authentication Status Widget -->
+          <div id="adminAuthWidget">
+            <button onclick="openAdminLoginModal()" class="inline-flex items-center px-2.5 py-1.5 text-xs font-semibold rounded-lg text-slate-700 bg-slate-100 hover:bg-slate-200 border border-slate-300 transition shadow-2xs" title="管理者登入以解鎖主檔編輯、新增與匯入功能">
+              <i data-lucide="lock" class="w-3.5 h-3.5 mr-1 text-slate-500"></i>
+              <span>管理登入</span>
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -191,7 +204,7 @@ def build():
             <option value="self_pay">自費/未收載 (Self-Pay)</option>
           </select>
 
-          <button onclick="openAddDrugModal()" class="inline-flex items-center px-3.5 py-2 text-xs font-semibold rounded-lg text-white bg-teal-600 hover:bg-teal-700 transition shadow-xs">
+          <button id="btnToolbarAddDrug" onclick="openAddDrugModal()" class="hidden items-center px-3.5 py-2 text-xs font-semibold rounded-lg text-white bg-teal-600 hover:bg-teal-700 transition shadow-xs">
             <i data-lucide="plus-circle" class="w-4 h-4 mr-1.5"></i>
             新增單筆
           </button>
@@ -206,7 +219,7 @@ def build():
           <span class="inline-flex items-center"><span class="px-1.5 py-0.2 rounded bg-blue-100 text-blue-700 font-bold mr-1 text-[10px]">[肝]</span>提示需依肝功能調整</span>
           <span class="text-teal-700 font-medium hidden lg:inline">💡 提示：點擊「📖 處方」按鈕可開啟完整處方集（用法用量、禁忌、副作用、懷孕分級）</span>
         </div>
-        <div class="flex flex-wrap items-center space-x-2">
+        <div id="adminToolbarActions" class="hidden items-center space-x-2">
           <button onclick="loadEnrichedPreset()" class="text-teal-700 font-semibold hover:underline bg-teal-50 hover:bg-teal-100 px-2 py-1 rounded-md border border-teal-200 transition flex items-center space-x-1">
             <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
             <span>重設載入 115Q2 處方集主檔 (738 筆)</span>
@@ -466,6 +479,52 @@ def build():
     </div>
   </div>
 
+  <!-- Modal: Admin Login (管理者驗證彈窗) -->
+  <div id="adminLoginModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center hidden p-4">
+    <div class="bg-white rounded-2xl max-w-sm w-full shadow-2xl border border-slate-200 overflow-hidden transform transition-all">
+      <div class="px-6 py-4 bg-gradient-to-r from-slate-800 to-slate-900 text-white flex items-center justify-between">
+        <div class="flex items-center space-x-2">
+          <i data-lucide="shield-check" class="w-5 h-5 text-teal-400"></i>
+          <h3 class="text-sm font-bold">管理者權限驗證</h3>
+        </div>
+        <button onclick="closeAdminLoginModal()" class="text-white/80 hover:text-white transition">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <form onsubmit="handleAdminLogin(event)" class="p-6 space-y-4 text-xs">
+        <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 text-slate-600 leading-relaxed">
+          <p class="font-semibold text-slate-800 mb-1 flex items-center">
+            <i data-lucide="info" class="w-3.5 h-3.5 mr-1 text-teal-600"></i>
+            臨床唯讀安全保護中
+          </p>
+          <p>若需進行藥品主檔新增、編輯、刪除或 Excel 批次匯入，請輸入管理者密碼解鎖。</p>
+        </div>
+
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">管理者密碼</label>
+          <div class="relative">
+            <input type="password" id="adminPwdInput" required placeholder="請輸入管理密碼..." class="w-full px-3 py-2.5 pr-10 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-teal-500 focus:outline-hidden font-mono">
+            <button type="button" onclick="togglePwdVisibility()" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
+              <i id="pwdEyeIcon" data-lucide="eye" class="w-4 h-4"></i>
+            </button>
+          </div>
+          <p id="adminPwdError" class="text-rose-500 font-medium text-[11px] mt-1.5 hidden flex items-center">
+            <i data-lucide="alert-circle" class="w-3 h-3 mr-1 inline"></i>
+            <span>密碼錯誤，請重新輸入！</span>
+          </p>
+        </div>
+
+        <div class="pt-2 flex items-center justify-end space-x-2">
+          <button type="button" onclick="closeAdminLoginModal()" class="px-3.5 py-2 rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-50 transition font-medium">取消</button>
+          <button type="submit" class="px-4 py-2 rounded-lg bg-teal-600 hover:bg-teal-700 text-white font-semibold shadow-xs transition flex items-center space-x-1">
+            <i data-lucide="unlock" class="w-3.5 h-3.5"></i>
+            <span>驗證並解鎖</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- Modal: Add / Edit Drug -->
   <div id="drugModal" class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center hidden p-4">
     <div class="bg-white rounded-2xl max-w-2xl w-full shadow-2xl border border-slate-100 overflow-hidden transform transition-all max-h-[90vh] flex flex-col">
@@ -621,7 +680,134 @@ def build():
     let sortAsc = true;
     let currentClinicalDrug = null;
 
+    // Admin Security & Access Control
+    const DEFAULT_ADMIN_HASH = "17ff0bb547df082e2f079aad4daad0ec1be134a5bc29b860ca0acd884c46af54"; // sha256 of "julia115"
+    let isAdmin = false;
+
+    async function sha256(message) {{
+      const msgBuffer = new TextEncoder().encode(message);
+      const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    }}
+
+    function initAdminAuth() {{
+      const sessionAuth = sessionStorage.getItem("hospital_drug_admin_auth");
+      isAdmin = (sessionAuth === "true");
+      updateAdminUi();
+    }}
+
+    function updateAdminUi() {{
+      const authWidget = document.getElementById("adminAuthWidget");
+      const topActions = document.getElementById("adminTopActions");
+      const toolbarAddBtn = document.getElementById("btnToolbarAddDrug");
+      const toolbarActions = document.getElementById("adminToolbarActions");
+
+      if (isAdmin) {{
+        if (authWidget) {{
+          authWidget.innerHTML = `
+            <div class="inline-flex items-center space-x-1.5 bg-emerald-50 text-emerald-800 border border-emerald-200 px-2.5 py-1.5 rounded-lg text-xs font-semibold shadow-2xs">
+              <i data-lucide="shield-check" class="w-4 h-4 text-emerald-600"></i>
+              <span>管理者：Julia</span>
+              <button onclick="adminLogout()" class="ml-1 px-1.5 py-0.5 rounded bg-white hover:bg-rose-50 text-rose-600 border border-rose-200 text-[10px] transition font-bold" title="登出管理模式">登出</button>
+            </div>
+          `;
+        }}
+        if (topActions) {{
+          topActions.classList.remove("hidden");
+          topActions.classList.add("flex");
+        }}
+        if (toolbarAddBtn) {{
+          toolbarAddBtn.classList.remove("hidden");
+          toolbarAddBtn.classList.add("inline-flex");
+        }}
+        if (toolbarActions) {{
+          toolbarActions.classList.remove("hidden");
+          toolbarActions.classList.add("flex");
+        }}
+      }} else {{
+        if (authWidget) {{
+          authWidget.innerHTML = `
+            <button onclick="openAdminLoginModal()" class="inline-flex items-center px-2.5 py-1.5 text-xs font-semibold rounded-lg text-slate-700 bg-slate-100 hover:bg-slate-200 border border-slate-300 transition shadow-2xs" title="管理者登入以解鎖主檔編輯、新增與匯入功能">
+              <i data-lucide="lock" class="w-3.5 h-3.5 mr-1 text-slate-500"></i>
+              <span>管理登入</span>
+            </button>
+          `;
+        }}
+        if (topActions) {{
+          topActions.classList.add("hidden");
+          topActions.classList.remove("flex");
+        }}
+        if (toolbarAddBtn) {{
+          toolbarAddBtn.classList.add("hidden");
+          toolbarAddBtn.classList.remove("inline-flex");
+        }}
+        if (toolbarActions) {{
+          toolbarActions.classList.add("hidden");
+          toolbarActions.classList.remove("flex");
+        }}
+      }}
+      lucide.createIcons();
+    }}
+
+    function openAdminLoginModal() {{
+      document.getElementById("adminPwdInput").value = "";
+      document.getElementById("adminPwdError").classList.add("hidden");
+      document.getElementById("adminLoginModal").classList.remove("hidden");
+      setTimeout(() => document.getElementById("adminPwdInput").focus(), 50);
+      lucide.createIcons();
+    }}
+
+    function closeAdminLoginModal() {{
+      document.getElementById("adminLoginModal").classList.add("hidden");
+    }}
+
+    async function handleAdminLogin(e) {{
+      e.preventDefault();
+      const inputPwd = document.getElementById("adminPwdInput").value.trim();
+      if (!inputPwd) return;
+
+      const hash = await sha256(inputPwd);
+      const targetHash = localStorage.getItem("hospital_admin_pwd_hash") || DEFAULT_ADMIN_HASH;
+
+      if (hash === targetHash) {{
+        isAdmin = true;
+        sessionStorage.setItem("hospital_drug_admin_auth", "true");
+        updateAdminUi();
+        renderTable();
+        closeAdminLoginModal();
+        showToast("已成功驗證並解鎖管理者權限！", "success");
+      }} else {{
+        document.getElementById("adminPwdError").classList.remove("hidden");
+        document.getElementById("adminPwdInput").focus();
+        document.getElementById("adminPwdInput").select();
+        lucide.createIcons();
+      }}
+    }}
+
+    function adminLogout() {{
+      isAdmin = false;
+      sessionStorage.removeItem("hospital_drug_admin_auth");
+      updateAdminUi();
+      renderTable();
+      showToast("已切換回臨床唯讀查詢模式", "info");
+    }}
+
+    function togglePwdVisibility() {{
+      const input = document.getElementById("adminPwdInput");
+      const icon = document.getElementById("pwdEyeIcon");
+      if (input.type === "password") {{
+        input.type = "text";
+        icon.setAttribute("data-lucide", "eye-off");
+      }} else {{
+        input.type = "password";
+        icon.setAttribute("data-lucide", "eye");
+      }}
+      lucide.createIcons();
+    }}
+
     window.addEventListener("DOMContentLoaded", () => {{
+      initAdminAuth();
       loadDataFromStorage();
       renderAll();
       lucide.createIcons();
@@ -647,6 +833,11 @@ def build():
     }}
 
     function loadEnrichedPreset() {{
+      if (!isAdmin) {{
+        showToast("請先登入管理者權限！", "warning");
+        openAdminLoginModal();
+        return;
+      }}
       if (confirm("確定要重設載入「115 年第二季院內藥品清單與處方集 (738 筆，含處方劑量、健保價與給付規定)」嗎？")) {{
         drugs = JSON.parse(JSON.stringify(HOSPITAL_ENRICHED_PRESET));
         saveDataToStorage();
@@ -656,6 +847,11 @@ def build():
     }}
 
     function clearAllDataConfirm() {{
+      if (!isAdmin) {{
+        showToast("請先登入管理者權限！", "warning");
+        openAdminLoginModal();
+        return;
+      }}
       if (confirm("警告：確定要清空所有藥品資料嗎？請確保您已匯出 Excel 備份。")) {{
         drugs = [];
         saveDataToStorage();
@@ -927,12 +1123,14 @@ def build():
                   <a href="${{queryUrl}}" target="_blank" title="健保署/食藥署官網查詢" class="p-1.5 text-slate-400 hover:text-sky-600 hover:bg-sky-50 rounded-md transition">
                     <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
                   </a>
-                  <button onclick="openEditDrugModal('${{drug.id}}')" title="編輯藥品" class="p-1.5 text-slate-400 hover:text-teal-600 hover:bg-teal-50 rounded-md transition">
-                    <i data-lucide="edit-2" class="w-3.5 h-3.5"></i>
-                  </button>
-                  <button onclick="deleteDrug('${{drug.id}}')" title="刪除" class="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-md transition">
-                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-                  </button>
+                  ${{isAdmin ? `
+                    <button onclick="openEditDrugModal('${{drug.id}}')" title="編輯藥品主檔" class="p-1.5 text-amber-600 hover:text-amber-800 hover:bg-amber-50 rounded-md transition border border-amber-200 shadow-2xs">
+                      <i data-lucide="edit-2" class="w-3.5 h-3.5"></i>
+                    </button>
+                    <button onclick="deleteDrug('${{drug.id}}')" title="刪除藥品" class="p-1.5 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded-md transition border border-rose-200 shadow-2xs">
+                      <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                    </button>
+                  ` : ''}}
                 </div>
               </td>
             </tr>
@@ -1080,6 +1278,11 @@ def build():
     }}
 
     function openAddDrugModal() {{
+      if (!isAdmin) {{
+        showToast("請先登入管理者權限！", "warning");
+        openAdminLoginModal();
+        return;
+      }}
       document.getElementById("modalTitle").innerText = "新增藥品主檔與臨床資料";
       document.getElementById("formDrugId").value = "";
       document.getElementById("drugForm").reset();
@@ -1091,6 +1294,11 @@ def build():
     }}
 
     function openEditDrugModal(id) {{
+      if (!isAdmin) {{
+        showToast("請先登入管理者權限！", "warning");
+        openAdminLoginModal();
+        return;
+      }}
       const drug = drugs.find(d => d.id === id);
       if (!drug) return;
 
@@ -1206,6 +1414,11 @@ def build():
     }}
 
     function deleteDrug(id) {{
+      if (!isAdmin) {{
+        showToast("請先登入管理者權限！", "warning");
+        openAdminLoginModal();
+        return;
+      }}
       const drug = drugs.find(d => d.id === id);
       if (!drug) return;
       if (confirm(`確定要刪除藥品「${{drug.brandName}} (${{drug.hospitalCode}})`)) {{
@@ -1217,6 +1430,11 @@ def build():
     }}
 
     function downloadExcelTemplate() {{
+      if (!isAdmin) {{
+        showToast("請先登入管理者權限！", "warning");
+        openAdminLoginModal();
+        return;
+      }}
       const headers = ["序號", "院內代碼", "英文商品名", "健保中文品名", "學名/主成分", "規格/包裝", "劑型", "健保代碼", "健保支付價", "健保給付規定章節", "給付規定PDF連結", "懷孕分級", "肝腎劑量調整", "臨床用法用量", "使用禁忌", "副作用", "注意事項", "ATC碼"];
       const templateData = [
         headers,
@@ -1298,6 +1516,11 @@ def build():
       overlay.addEventListener("drop", (e) => {{
         e.preventDefault();
         overlay.classList.add("hidden");
+        if (!isAdmin) {{
+          showToast("請先登入管理者權限以匯入 Excel 檔案！", "warning");
+          openAdminLoginModal();
+          return;
+        }}
         const files = e.dataTransfer.files;
         if (files && files.length > 0) {{
           processExcelFile(files[0]);
@@ -1306,6 +1529,12 @@ def build():
     }}
 
     function handleExcelUpload(e) {{
+      if (!isAdmin) {{
+        showToast("請先登入管理者權限以匯入 Excel 檔案！", "warning");
+        openAdminLoginModal();
+        e.target.value = "";
+        return;
+      }}
       const file = e.target.files[0];
       if (!file) return;
       processExcelFile(file);
