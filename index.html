@@ -228,8 +228,8 @@
                 </div>
               </th>
 
-              <!-- Column 4: Generic Name (Wider, larger font, multiline) -->
-              <th class="py-3 px-3 w-52 min-w-[180px] bg-teal-50/50 text-teal-900 border-x border-teal-100/60 font-bold cursor-pointer hover:bg-teal-100/50 transition" onclick="toggleSort('genericName')">
+              <!-- Column 4: Generic Name (加大文字 13px、粗體強調、適中欄寬、多行自動換行) -->
+              <th class="py-3 px-3 w-48 min-w-[150px] max-w-[210px] bg-teal-50/70 text-teal-950 border-x border-teal-200/80 font-bold cursor-pointer hover:bg-teal-100/60 transition" onclick="toggleSort('genericName')">
                 <div class="flex items-center space-x-1">
                   <span>學名 / 主成分</span>
                   <i data-lucide="arrow-up-down" class="w-3 h-3 text-teal-700"></i>
@@ -866,9 +866,9 @@
                 </div>
               </td>
 
-              <!-- 4. 學名 / 主成分 (加粗加大字體 13px，支援自動換行) -->
-              <td class="py-3 px-3 bg-teal-50/20 border-x border-teal-100/60 w-52 min-w-[180px]">
-                <div class="text-[13px] font-bold text-slate-900 break-words whitespace-normal leading-snug" title="${escapeHtml(drug.genericName || '-')}">
+              <!-- 4. 學名 / 主成分 (加大文字 13px、粗體強調、適中欄寬、多行自動換行) -->
+              <td class="py-3 px-3 bg-teal-50/30 border-x border-teal-100/80 w-48 min-w-[150px] max-w-[210px]">
+                <div class="text-[13px] font-bold text-slate-900 break-words break-all whitespace-normal leading-snug tracking-tight" title="${escapeHtml(drug.genericName || '-')}">
                   ${escapeHtml(drug.genericName || "-")}
                 </div>
               </td>
