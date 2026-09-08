@@ -801,15 +801,24 @@
           // Payment Rules Badge / Link
           let ruleDisplay = `<span class="text-slate-400 text-[11px]">無特殊規定</span>`;
           if (drug.ruleSection && drug.ruleSection.trim() && drug.ruleSection !== '無特殊章節') {
-            if (drug.ruleLink && drug.ruleLink.trim()) {
-              ruleDisplay = `
-                <a href="${drug.ruleLink}" target="_blank" class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200 hover:bg-indigo-100 transition shadow-2xs group-hover:border-indigo-300" title="點擊檢視健保給付規定章節 PDF">
-                  <i data-lucide="file-text" class="w-3 h-3 mr-1 text-indigo-500"></i>
-                  ${escapeHtml(drug.ruleSection)} PDF
-                </a>
-              `;
-            } else {
-              ruleDisplay = `<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-slate-100 text-slate-700 font-mono">${escapeHtml(drug.ruleSection)}</span>`;
+            const rawSections = (drug.ruleSection || '').split(',').map(s => s.trim()).filter(Boolean);
+            const rawLinks = (drug.ruleLink || '').split(',').map(l => l.trim()).filter(Boolean);
+            
+            if (rawLinks.length > 0) {
+              const badges = rawLinks.map((link, idx) => {
+                const match = link.match(/DurgFileName=([0-9.]+)_/);
+                const secLabel = match ? match[1] : (rawSections[idx] || rawSections[0] || '給付規定');
+                return `
+                  <a href="${link}" target="_blank" class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200 hover:bg-indigo-100 transition shadow-2xs group-hover:border-indigo-300 whitespace-nowrap" title="點擊檢視健保給付規定【${escapeHtml(secLabel)}】PDF">
+                    <i data-lucide="file-text" class="w-3 h-3 mr-1 text-indigo-500 shrink-0"></i>
+                    <span>${escapeHtml(secLabel)} PDF</span>
+                  </a>
+                `;
+              });
+              ruleDisplay = `<div class="flex flex-col gap-1 items-start">${badges.join('')}</div>`;
+            } else if (rawSections.length > 0) {
+              const badges = rawSections.map(sec => `<span class="inline-flex items-center px-1.5 py-0.5 rounded text-[11px] font-medium bg-slate-100 text-slate-700 font-mono whitespace-nowrap">${escapeHtml(sec)}</span>`);
+              ruleDisplay = `<div class="flex flex-col gap-1 items-start">${badges.join('')}</div>`;
             }
           }
 
@@ -992,11 +1001,22 @@
       document.getElementById("clinicNhiInfo").innerText = `健保碼：${drug.nhiCode || '-'} • 支付價：${priceText} • 規定章節：${drug.ruleSection || '無特殊章節'}`;
 
       if (drug.ruleLink && drug.ruleLink.trim()) {
+        const rawSections = (drug.ruleSection || '').split(',').map(s => s.trim()).filter(Boolean);
+        const rawLinks = drug.ruleLink.split(',').map(l => l.trim()).filter(Boolean);
+
+        const btnHtml = rawLinks.map((link, idx) => {
+          const match = link.match(/DurgFileName=([0-9.]+)_/);
+          const secLabel = match ? match[1] : (rawSections[idx] || rawSections[0] || '給付規定');
+          return `
+            <a href="${link}" target="_blank" class="px-3 py-1.5 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 font-medium text-xs transition flex items-center space-x-1.5 shadow-sm">
+              <i data-lucide="file-text" class="w-3.5 h-3.5 shrink-0"></i>
+              <span>下載【${escapeHtml(secLabel)}】給付規定 PDF</span>
+            </a>
+          `;
+        }).join('');
+
         document.getElementById("clinicNhiRuleAction").innerHTML = `
-          <a href="${drug.ruleLink}" target="_blank" class="px-3 py-1.5 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 font-medium text-xs transition flex items-center space-x-1 shadow-sm">
-            <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
-            <span>下載健保給付規定 PDF</span>
-          </a>
+          <div class="flex flex-wrap items-center gap-2">${btnHtml}</div>
         `;
       } else {
         document.getElementById("clinicNhiRuleAction").innerHTML = `
