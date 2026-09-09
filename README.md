@@ -82,6 +82,19 @@ c:\藥品代碼建立\
 
 ## 開發歷史／Changelog
 
+### 2026-09-10
+- **學名/主成分英文分詞全面標準化**：
+  - 徹底檢核全院 738 筆藥品之「學名 / 主成分 (Generic Name)」欄位。
+  - 將所有因資料匯出或格式黏連之化學品名與修飾詞，全面校正為符合 INN / USAN / TFDA 之標準醫學英文格式（如 `Aluminum Hydroxide Dried Gel / Magnesium Carbonate Light / Alginic Acid`、`Soybean Oil / Medium-Chain Triglycerides / Olive Oil / Fish Oil`、`Silver Sulfadiazine`、`Potassium Chloride`、`Sodium Chloride`、`Der p extract / Der f extract` 等）。
+  - 多成分複方藥物統一使用標準空白分隔斜線 ` / `，鹽類與水合物修飾詞規範化。
+  - 同步更新 JSON 資料庫、前端單頁系統 `index.html` 與 Excel 總表。
+
+### 2026-09-09
+- 系統正式正名為「**衛生福利部嘉義醫院藥品臨床處方集管理系統**」。
+- 整合 115 年第二季全院 738 筆藥品主檔、處方集臨床資訊（用法用量、禁忌、副作用、警語、懷孕分級、ATC 碼）與健保給付規定 PDF 連結。
+- 建置管理密碼保護機制（`julia115`），提供臨床同仁唯讀查詢模式與管理員編輯權限。
+- 標頭加入最新修訂時間戳記，表尾標註「管理者:藥品管理組Julia」。
+
 ### 2026-09-05
 - 完成專案需求澄清與架構設計（精簡 7 欄位規格、純前端單頁 Web 應用）。
 - 建置 `index.html`：包含醫療主題 UI、即時多條件快搜、健保 10 碼校驗、院內碼防重複機制、SheetJS Excel 雙向匯出入與範本下載。
