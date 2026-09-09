@@ -18,6 +18,7 @@ config/credentials.*
 *.temp
 *.swp
 *.log
+~$*
 .cache/
 tmp/
 temp/

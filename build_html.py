@@ -13,7 +13,7 @@ def build():
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>衛生福利部嘉義醫院藥品臨床處方輯管理系統 (115年第二季)</title>
+  <title>衛生福利部嘉義醫院藥品臨床處方集管理系統 (115年第二季)</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- SheetJS (xlsx) CDN -->
@@ -65,8 +65,8 @@ def build():
           </div>
           <div>
             <div class="flex flex-wrap items-center gap-2">
-              <h1 class="text-base sm:text-lg font-bold text-slate-900 tracking-tight">衛生福利部嘉義醫院藥品臨床處方輯管理系統</h1>
-              <span class="px-2 py-0.5 text-xs font-semibold rounded-full bg-teal-100 text-teal-800 border border-teal-200">115 年第二季 處方輯整合版</span>
+              <h1 class="text-base sm:text-lg font-bold text-slate-900 tracking-tight">衛生福利部嘉義醫院藥品臨床處方集管理系統</h1>
+              <span class="px-2 py-0.5 text-xs font-semibold rounded-full bg-teal-100 text-teal-800 border border-teal-200">115 年第二季 處方集整合版</span>
               <span class="inline-flex items-center px-2 py-0.5 text-[11px] font-medium rounded-full bg-slate-100 text-slate-600 border border-slate-200 shadow-2xs">
                 <i data-lucide="clock" class="w-3 h-3 mr-1 text-teal-600"></i>
                 最新修訂：{revision_time}
@@ -167,7 +167,7 @@ def build():
           <input 
             type="text" 
             id="searchInput" 
-            placeholder="搜尋商品名、中文名、學名/成分、院內代碼、健保碼、藥理分類、適應症、劑量、禁忌..." 
+            placeholder="搜尋英文商品名、健保中文名、學名/主成分、院內碼、健保碼、ATC 碼、劑量、禁忌、副作用..." 
             oninput="handleSearch()"
             class="w-full pl-9 pr-4 py-2 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:outline-hidden focus:ring-2 focus:ring-teal-500 focus:bg-white transition"
           >
@@ -343,7 +343,7 @@ def build():
 
   <footer class="bg-white border-t border-slate-200 py-4 mt-8">
     <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-500 space-y-1">
-      <p>衛生福利部嘉義醫院藥品臨床處方輯管理系統 • 資料來源：115 年第二季院內藥品清單、嘉義醫院處方集與中央健保署 • 管理者:藥品管理組Julia</p>
+      <p>衛生福利部嘉義醫院藥品臨床處方集管理系統 • 資料來源：115 年第二季院內藥品清單、嘉義醫院處方集與中央健保署 • 管理者:藥品管理組Julia</p>
       <p class="text-slate-400">本系統純前端本機運作，資料安全保密不外傳 • 支援健保代碼、中文名、支付價、處方集臨床劑量、禁忌、副作用與給付規定 PDF</p>
     </div>
   </footer>
@@ -365,7 +365,7 @@ def build():
           <img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=https%3A%2F%2Fjuliahml-ux.github.io%2Fhospital-drug-master%2F&margin=10" alt="QR Code" class="w-48 h-48 rounded-lg shadow-xs">
         </div>
         <div>
-          <p class="text-xs font-semibold text-slate-800">衛生福利部嘉義醫院藥品臨床處方輯管理系統</p>
+          <p class="text-xs font-semibold text-slate-800">衛生福利部嘉義醫院藥品臨床處方集管理系統</p>
           <p class="text-[11px] text-slate-400 font-mono mt-1 break-all">https://juliahml-ux.github.io/hospital-drug-master/</p>
         </div>
         <button onclick="copySystemUrl()" class="w-full py-2 px-3 rounded-lg bg-teal-50 text-teal-700 hover:bg-teal-100 font-medium text-xs transition flex items-center justify-center space-x-1.5 border border-teal-200">
@@ -1489,9 +1489,9 @@ def build():
       const ws = XLSX.utils.json_to_sheet(exportData);
       ws['!cols'] = [{{ wch: 8 }}, {{ wch: 14 }}, {{ wch: 32 }}, {{ wch: 25 }}, {{ wch: 30 }}, {{ wch: 18 }}, {{ wch: 10 }}, {{ wch: 16 }}, {{ wch: 14 }}, {{ wch: 20 }}, {{ wch: 35 }}, {{ wch: 10 }}, {{ wch: 16 }}, {{ wch: 30 }}, {{ wch: 35 }}, {{ wch: 35 }}, {{ wch: 35 }}, {{ wch: 40 }}, {{ wch: 12 }}, {{ wch: 35 }}];
       const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, "藥品臨床處方輯主檔");
+      XLSX.utils.book_append_sheet(wb, ws, "藥品臨床處方集主檔");
       const today = new Date().toISOString().slice(0, 10).replace(/-/g, "");
-      XLSX.writeFile(wb, `衛生福利部嘉義醫院藥品臨床處方輯_${{today}}.xlsx`);
+      XLSX.writeFile(wb, `衛生福利部嘉義醫院藥品臨床處方集_${{today}}.xlsx`);
       showToast(`已成功匯出 ${{drugs.length}} 筆臨床藥品資料！`, "success");
     }}
 

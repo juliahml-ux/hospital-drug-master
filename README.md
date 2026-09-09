@@ -1,6 +1,6 @@
-# 醫院藥品主檔與代碼對照管理系統 (Hospital Drug Code Master & Validation System)
+# 衛生福利部嘉義醫院藥品臨床處方集管理系統 (Hospital Drug Formulary & Clinical Master System)
 
-專為醫院藥局、臨床藥師與醫療資訊管理人員打造的輕量化藥品主檔維護、代碼對照、格式檢核與 Excel 雙向轉換系統。
+專為醫院藥局、臨床藥師、醫師與護理醫療團隊打造的輕量化藥品主檔維護、臨床處方集查閱、健保給付規定 PDF 整合與 Excel 雙向轉換系統。
 
 ---
 
