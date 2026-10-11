@@ -681,7 +681,7 @@ def build():
     let currentClinicalDrug = null;
 
     // Admin Security & Access Control
-    const DEFAULT_ADMIN_HASH = "17ff0bb547df082e2f079aad4daad0ec1be134a5bc29b860ca0acd884c46af54"; // sha256 of "julia115"
+    const DEFAULT_ADMIN_HASH = "9da28bed6e6f98dab6e8277dfd070bb7860fe890b4b74ef55e82cfe3c18de088"; // sha256 of "julia2052"
     let isAdmin = false;
 
     async function sha256(message) {{
@@ -768,6 +768,9 @@ def build():
       if (!inputPwd) return;
 
       const hash = await sha256(inputPwd);
+      if (localStorage.getItem("hospital_admin_pwd_hash") === "17ff0bb547df082e2f079aad4daad0ec1be134a5bc29b860ca0acd884c46af54") {{
+        localStorage.removeItem("hospital_admin_pwd_hash");
+      }}
       const targetHash = localStorage.getItem("hospital_admin_pwd_hash") || DEFAULT_ADMIN_HASH;
 
       if (hash === targetHash) {{

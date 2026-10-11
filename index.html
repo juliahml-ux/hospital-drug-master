@@ -59,7 +59,7 @@
               <span class="px-2 py-0.5 text-xs font-semibold rounded-full bg-teal-100 text-teal-800 border border-teal-200">115 年第三季 處方集整合版</span>
               <span class="inline-flex items-center px-2 py-0.5 text-[11px] font-medium rounded-full bg-slate-100 text-slate-600 border border-slate-200 shadow-2xs">
                 <i data-lucide="clock" class="w-3 h-3 mr-1 text-teal-600"></i>
-                最新修訂：2026-10-11 23:15
+                最新修訂：2026-10-11 23:18
               </span>
             </div>
             <p class="text-xs text-slate-500 mt-0.5">756 筆院內主檔 • 健保價與給付 PDF • 臨床用法用量 • 禁忌副作用 • 懷孕/肝腎安全分級</p>
@@ -671,7 +671,7 @@
     let currentClinicalDrug = null;
 
     // Admin Security & Access Control
-    const DEFAULT_ADMIN_HASH = "17ff0bb547df082e2f079aad4daad0ec1be134a5bc29b860ca0acd884c46af54"; // sha256 of "julia115"
+    const DEFAULT_ADMIN_HASH = "9da28bed6e6f98dab6e8277dfd070bb7860fe890b4b74ef55e82cfe3c18de088"; // sha256 of "julia2052"
     let isAdmin = false;
 
     async function sha256(message) {
@@ -758,6 +758,9 @@
       if (!inputPwd) return;
 
       const hash = await sha256(inputPwd);
+      if (localStorage.getItem("hospital_admin_pwd_hash") === "17ff0bb547df082e2f079aad4daad0ec1be134a5bc29b860ca0acd884c46af54") {
+        localStorage.removeItem("hospital_admin_pwd_hash");
+      }
       const targetHash = localStorage.getItem("hospital_admin_pwd_hash") || DEFAULT_ADMIN_HASH;
 
       if (hash === targetHash) {
