@@ -259,7 +259,7 @@ def build():
           <span class="inline-flex items-center"><span class="px-1.5 py-0.2 rounded bg-blue-100 text-blue-700 font-bold mr-1 text-[10px]">[肝]</span>提示依肝功能調整</span>
           <span class="inline-flex items-center text-teal-800 bg-teal-50 px-2 py-0.5 rounded border border-teal-200 text-[11px] font-medium">
             <i data-lucide="move-horizontal" class="w-3 h-3 mr-1 text-teal-600"></i>
-            拖曳表頭線可調整欄寬（規格/包裝支援多行跨行）
+            拖曳表頭線可調整欄寬
           </span>
           <button onclick="resetAllColWidths()" class="text-slate-500 hover:text-teal-700 hover:underline inline-flex items-center text-xs transition" title="還原所有欄位為最適預設寬度">
             <i data-lucide="rotate-ccw" class="w-3 h-3 mr-1 text-slate-400"></i>
