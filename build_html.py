@@ -462,14 +462,16 @@ def build():
         <div class="flex flex-wrap items-center gap-2 pt-1" id="clinicAlertBadges"></div>
 
         <!-- Dosage & Administration -->
-        <div class="bg-teal-50/50 rounded-xl p-3.5 border border-teal-200/80">
-          <div class="flex items-center space-x-2 text-teal-900 font-bold mb-1.5">
-            <i data-lucide="activity" class="w-4 h-4 text-teal-600"></i>
+        <div class="bg-teal-50/60 rounded-2xl p-4 border border-teal-200 shadow-2xs">
+          <div class="flex items-center space-x-2 text-teal-950 font-bold text-sm mb-2">
+            <i data-lucide="activity" class="w-4.5 h-4.5 text-teal-600"></i>
             <span>臨床用法用量與劑量上限 (Dosage & Max Dose)</span>
           </div>
-          <p id="clinicDosage" class="text-slate-800 font-medium whitespace-pre-line leading-relaxed text-[13px] bg-white p-2.5 rounded-lg border border-teal-100">
-            -
-          </p>
+          <div class="bg-white p-3.5 rounded-xl border border-teal-100 shadow-2xs">
+            <p id="clinicDosage" class="text-slate-900 font-semibold text-sm sm:text-base leading-relaxed whitespace-pre-line tracking-wide">
+              -
+            </p>
+          </div>
         </div>
 
         <!-- Contraindications & Adverse Effects -->
@@ -671,7 +673,7 @@ def build():
 
         <div>
           <label class="block font-semibold text-slate-700 mb-1">臨床用法用量 (Dosage & Max Dose)</label>
-          <textarea id="formDosage" rows="2" placeholder="例：2.5-5mg daily (max. 10mg/day)" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:outline-hidden"></textarea>
+          <textarea id="formDosage" rows="3" placeholder="例：2.5-5mg daily (max. 10mg/day)" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-teal-500 focus:outline-hidden"></textarea>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
