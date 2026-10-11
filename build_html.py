@@ -2,7 +2,7 @@ import json
 from datetime import datetime
 
 def build():
-    with open('output/115_q2_drugs_enriched_preset.json', 'r', encoding='utf-8') as f:
+    with open('output/115_q3_drugs_enriched_preset.json', 'r', encoding='utf-8') as f:
         drugs = json.load(f)
 
     json_data = json.dumps(drugs, ensure_ascii=False)
@@ -13,7 +13,7 @@ def build():
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>衛生福利部嘉義醫院藥品臨床處方集管理系統 (115年第二季)</title>
+  <title>衛生福利部嘉義醫院藥品臨床處方集管理系統 (115年第三季)</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- SheetJS (xlsx) CDN -->
@@ -66,13 +66,13 @@ def build():
           <div>
             <div class="flex flex-wrap items-center gap-2">
               <h1 class="text-base sm:text-lg font-bold text-slate-900 tracking-tight">衛生福利部嘉義醫院藥品臨床處方集管理系統</h1>
-              <span class="px-2 py-0.5 text-xs font-semibold rounded-full bg-teal-100 text-teal-800 border border-teal-200">115 年第二季 處方集整合版</span>
+              <span class="px-2 py-0.5 text-xs font-semibold rounded-full bg-teal-100 text-teal-800 border border-teal-200">115 年第三季 處方集整合版</span>
               <span class="inline-flex items-center px-2 py-0.5 text-[11px] font-medium rounded-full bg-slate-100 text-slate-600 border border-slate-200 shadow-2xs">
                 <i data-lucide="clock" class="w-3 h-3 mr-1 text-teal-600"></i>
                 最新修訂：{revision_time}
               </span>
             </div>
-            <p class="text-xs text-slate-500 mt-0.5">738 筆院內主檔 • 健保價與給付 PDF • 臨床用法用量 • 禁忌副作用 • 懷孕/肝腎安全分級</p>
+            <p class="text-xs text-slate-500 mt-0.5">756 筆院內主檔 • 健保價與給付 PDF • 臨床用法用量 • 禁忌副作用 • 懷孕/肝腎安全分級</p>
           </div>
         </div>
 
@@ -120,8 +120,8 @@ def build():
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       <div class="bg-white rounded-xl p-4 border border-slate-200 shadow-xs flex items-center justify-between">
         <div>
-          <p class="text-xs font-medium text-slate-500">115Q2 藥品總數</p>
-          <p id="kpiTotalCount" class="text-2xl font-bold text-slate-900 mt-1">738</p>
+          <p class="text-xs font-medium text-slate-500">115Q3 藥品總數</p>
+          <p id="kpiTotalCount" class="text-2xl font-bold text-slate-900 mt-1">756</p>
         </div>
         <div class="w-11 h-11 rounded-lg bg-teal-50 text-teal-600 flex items-center justify-center">
           <i data-lucide="database" class="w-6 h-6"></i>
@@ -222,7 +222,7 @@ def build():
         <div id="adminToolbarActions" class="hidden items-center space-x-2">
           <button onclick="loadEnrichedPreset()" class="text-teal-700 font-semibold hover:underline bg-teal-50 hover:bg-teal-100 px-2 py-1 rounded-md border border-teal-200 transition flex items-center space-x-1">
             <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
-            <span>重設載入 115Q2 處方集主檔 (738 筆)</span>
+            <span>重設載入 115Q3 處方集主檔 (756 筆)</span>
           </button>
           <span>•</span>
           <button onclick="clearAllDataConfirm()" class="text-rose-600 hover:underline">清空資料</button>
@@ -343,7 +343,7 @@ def build():
 
   <footer class="bg-white border-t border-slate-200 py-4 mt-8">
     <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-500 space-y-1">
-      <p>衛生福利部嘉義醫院藥品臨床處方集管理系統 • 資料來源：115 年第二季院內藥品清單、嘉義醫院處方集與中央健保署 • 管理者:藥品管理組Julia</p>
+      <p>衛生福利部嘉義醫院藥品臨床處方集管理系統 • 資料來源：115 年第三季院內藥品清單、嘉義醫院處方集與中央健保署 • 管理者:藥品管理組Julia</p>
       <p class="text-slate-400">本系統純前端本機運作，資料安全保密不外傳 • 支援健保代碼、中文名、支付價、處方集臨床劑量、禁忌、副作用與給付規定 PDF</p>
     </div>
   </footer>
@@ -669,10 +669,10 @@ def build():
   </div>
 
   <script>
-    // Embedded 738 Clinical Drugs with Formulary Clinical Data & NHI Prices
+    // Embedded 756 Clinical Drugs with Formulary Clinical Data & NHI Prices
     const HOSPITAL_ENRICHED_PRESET = {json_data};
 
-    const STORAGE_KEY = "hospital_drug_master_db_115_q2_v1";
+    const STORAGE_KEY = "hospital_drug_master_db_115_q3_v1";
     let drugs = [];
     let currentPage = 1;
     let pageSize = 15;
@@ -838,11 +838,11 @@ def build():
         openAdminLoginModal();
         return;
       }}
-      if (confirm("確定要重設載入「115 年第二季院內藥品清單與處方集 (738 筆，含處方劑量、健保價與給付規定)」嗎？")) {{
+      if (confirm("確定要重設載入「115 年第三季院內藥品清單與處方集 (756 筆，含處方劑量、健保價與給付規定)」嗎？")) {{
         drugs = JSON.parse(JSON.stringify(HOSPITAL_ENRICHED_PRESET));
         saveDataToStorage();
         renderAll();
-        showToast(`已成功載入 738 筆第二季藥品主檔！`, "success");
+        showToast(`已成功載入 756 筆第三季藥品主檔！`, "success");
       }}
     }}
 
@@ -910,6 +910,8 @@ def build():
           (drug.ruleSection && drug.ruleSection.toLowerCase().includes(q)) ||
           (drug.dosage && drug.dosage.toLowerCase().includes(q)) ||
           (drug.ci && drug.ci.toLowerCase().includes(q)) ||
+          (drug.ae && drug.ae.toLowerCase().includes(q)) ||
+          (drug.note && drug.note.toLowerCase().includes(q)) ||
           (drug.pharmCategory && drug.pharmCategory.toLowerCase().includes(q));
 
         if (!matchQuery) return false;
@@ -1382,7 +1384,7 @@ def build():
         }}
       }} else {{
         const newDrug = {{
-          id: "d_q2_" + Date.now(),
+          id: "d_q3_" + Date.now(),
           seq: drugs.length + 1,
           hospitalCode,
           brandName,
@@ -1445,8 +1447,8 @@ def build():
       const ws = XLSX.utils.aoa_to_sheet(templateData);
       ws['!cols'] = [{{ wch: 8 }}, {{ wch: 14 }}, {{ wch: 32 }}, {{ wch: 25 }}, {{ wch: 30 }}, {{ wch: 18 }}, {{ wch: 10 }}, {{ wch: 16 }}, {{ wch: 14 }}, {{ wch: 20 }}, {{ wch: 35 }}, {{ wch: 10 }}, {{ wch: 16 }}, {{ wch: 35 }}, {{ wch: 30 }}, {{ wch: 30 }}, {{ wch: 30 }}, {{ wch: 12 }}];
       const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, "115Q2處方主檔標準範本");
-      XLSX.writeFile(wb, "115Q2藥品主檔標準匯入範本.xlsx");
+      XLSX.utils.book_append_sheet(wb, ws, "115Q3處方主檔標準範本");
+      XLSX.writeFile(wb, "115Q3藥品主檔標準匯入範本.xlsx");
       showToast("已下載 Excel 標準匯入範本", "success");
     }}
 
@@ -1604,7 +1606,7 @@ def build():
             if (!hospitalCode && !brandName && !genericName) continue;
 
             parsedItems.push({{
-              id: "d_q2_" + Date.now() + "_" + i,
+              id: "d_q3_" + Date.now() + "_" + i,
               seq: i,
               hospitalCode: hospitalCode || `TEMP_${{i}}`,
               brandName: brandName || "未填寫品名",
@@ -1680,7 +1682,7 @@ def build():
 """
     with open('index.html', 'w', encoding='utf-8') as f:
         f.write(html_content)
-    print("SUCCESS: index.html compiled with full 115Q2 Formulary integration (738 items)!")
+    print("SUCCESS: index.html compiled with full 115Q3 Formulary integration (756 items)!")
 
 if __name__ == '__main__':
     build()
